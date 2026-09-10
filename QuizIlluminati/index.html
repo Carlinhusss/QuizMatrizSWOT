@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Matriz SWOT</title>
+<style>
+  :root{
+    --bg: #0D0D0D;
+    --card: #18181B;
+    --card-alt: #1E1E24;
+    --accent: #E50914;
+    --accent-glow: rgba(229,9,20,0.35);
+    --text: #F4F4F5;
+    --text-dim: #9B9BA3;
+    --border: #2A2A31;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+  .app{
+    width:100%;
+    max-width: 560px;
+  }
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  h1{
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  p.sub{
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    line-height:1.5;
+  }
+  input[type="text"]{
+    width:100%;
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus{
+    border-color: var(--accent);
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  }
+  .btn-primary{
+    background: var(--accent);
+    color: #fff;
+    width:100%;
+    margin-top: 20px;
+    box-shadow: 0 8px 24px var(--accent-glow);
+  }
+  .btn-primary:hover:not(:disabled){
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled{
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow:none;
+  }
+  .btn-secondary{
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover{
+    color: var(--text);
+    border-color: var(--text-dim);
+  }
+  .progress-wrap{
+    margin-bottom: 24px;
+  }
+  .progress-labels{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .progress-labels b{ color: var(--text); }
+  .progress-bar-bg{
+    height: 6px;
+    background: var(--card-alt);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .tag{
+    display:inline-block;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .timer{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .timer.warning{
+    color: var(--accent);
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse{
+    0%, 100%{ opacity: 1; }
+    50%{ opacity: 0.5; }
+  }
+  .timer-icon{
+    font-size: 0.9rem;
+  }
+  .empresa{
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .contexto{
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .pergunta{
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .opcoes{
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .opcao{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opcao:hover{
+    border-color: #4a4a52;
+  }
+  .opcao.selected{
+    border-color: var(--accent);
+    background: rgba(229,9,20,0.08);
+  }
+  .radio{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .opcao.selected .radio{
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .opcao.selected .radio::after{
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    width:8px; height:8px;
+    background:#fff;
+    border-radius:50%;
+    transform: translate(-50%,-50%);
+  }
+  .opcao-texto{ font-size: 0.95rem; }
+  .footer-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .footer-nav .btn-primary{
+    width:auto;
+    margin-top:0;
+    flex:1;
+  }
+  .hidden{ display:none; }
+  .center{ text-align:center; }
+  .emoji{ font-size: 2.4rem; margin-bottom: 12px; }
+  .resultado-titulo{
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .resultado-score{
+    color: var(--text-dim);
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+  .resultado-score b{ color: var(--accent); font-size: 1.3rem; }
+  .stack{
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  table{
+    width:100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  th, td{
+    text-align:left;
+    padding: 12px 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th{
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  tr.current-player{
+    background: rgba(229,9,20,0.1);
+  }
+  tr.current-player td:first-child{
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+  }
+  .rank-pos{
+    color: var(--text-dim);
+    font-weight: 600;
+    width: 30px;
+  }
+  .empty-rank{
+    color: var(--text-dim);
+    text-align:center;
+    padding: 24px 0;
+    font-size: 0.9rem;
+  }
+  .footer{
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 20px;
+    opacity: 0.6;
+  }
+  .ranking-preview{
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .ranking-preview-titulo{
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .ranking-preview-lista{
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ranking-preview-item{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    background: var(--card-alt);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  .ranking-preview-pos{
+    color: var(--accent);
+    font-weight: 700;
+    width: 20px;
+  }
+  .ranking-preview-nome{
+    flex:1;
+    color: var(--text);
+  }
+  .ranking-preview-score{
+    color: var(--text-dim);
+  }
+  #confetti-canvas{
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+
+<script>
+const perguntas = [
+  {"id":1,"empresa":"TechCorp (Startup de Software)","contexto":"A empresa enfrenta uma alta taxa de rotatividade de funcionários (turnover) no setor de desenvolvimento devido à forte competição de salários no mercado internacional.","pergunta":"Na Matriz SWOT da TechCorp, a alta taxa de turnover de devs é considerada uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":1},
+  {"id":2,"empresa":"ModaExpress (E-commerce de Roupas)","contexto":"O governo aprovou uma nova reforma tributária que aumentará significativamente a taxa sobre produtos importados do setor têxtil.","pergunta":"Para a ModaExpress, que vende exclusivamente itens importados, essa nova lei representa uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":3},
+  {"id":3,"empresa":"Sabor & Cia (Rede de Franquias de Alimentação)","contexto":"A rede possui um contrato de exclusividade de longo prazo com fornecedores globais, garantindo matéria-prima de altíssima qualidade a custos 30% menores que os concorrentes.","pergunta":"Esse contrato exclusivo e custos reduzidos entram na Matriz SWOT como uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":0},
+  {"id":4,"empresa":"FinBank (Fintech de Serviços Financeiros)","contexto":"Pesquisas apontam uma tendência crescente no mercado onde clientes buscam ativamente aplicativos com inteligência artificial para planejamento financeiro automático.","pergunta":"Essa nova tendência de comportamento dos consumidores é identificada como uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":2},
+  {"id":5,"empresa":"MegaVarejo (Rede de Lojas Físicas)","contexto":"A empresa ainda utiliza um sistema de estoque legado, desconectado do e-commerce, gerando erros frequentes na entrega e atrasos nos pedidos.","pergunta":"A desatualização e falta de integração do sistema interno de estoque é uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":1},
+  {"id":6,"empresa":"LogiFast (Empresa de Logística e Entregas)","contexto":"Uma gigante multinacional de tecnologia anunciou sua entrada no mercado local oferecendo frete grátis subsidiado para grandes empresas.","pergunta":"A entrada dessa concorrente gigante com preços subsidiados representa uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":3},
+  {"id":7,"empresa":"BioHealth (Empresa de Biotecnologia)","contexto":"A BioHealth patenteou um algoritmo proprietário capaz de diagnosticar doenças raras com 99% de precisão antes da concorrência.","pergunta":"A posse dessa patente tecnológica única e exclusiva é classificada como uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":0},
+  {"id":8,"empresa":"AgroVerde (Empresa do Agronegócio)","contexto":"O governo lançou uma linha de crédito subsidiada com juros quase zero para produtores que investirem na transição para energia solar.","pergunta":"O surgimento dessa linha de financiamento governamental externa é uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":2},
+  {"id":9,"empresa":"AutoDrive (Montadora de Veículos)","contexto":"A montadora possui alta dependência de um único fornecedor de microchips no exterior, o que tem parado as linhas de montagem durante crises internacionais.","pergunta":"Essa forte dependência de um único fornecedor externo para a operação é uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":1},
+  {"id":10,"empresa":"CaféUrban (Rede de Cafeterias)","contexto":"Com o aumento do trabalho remoto na cidade, surgiu uma grande demanda por espaços funcionais com Wi-Fi de alta velocidade e café de qualidade para reuniões casuais.","pergunta":"A expansão dessa nova necessidade de mercado de trabalho híbrido representa para a rede uma:","opcoes":["Força (Strength)","Fraqueza (Weakness)","Oportunidade (Opportunity)","Ameaça (Threat)"],"respostaCorreta":2}
+];
+
+const RANKING_KEY = 'swot_quiz_ranking';
+
+const TEMPO_TOTAL_SEGUNDOS = 5 * 60;
+
+let state = {
+  tela: 'boasVindas', // boasVindas | quiz | resultadoGanhou | resultadoPerdeu | ranking | tempoExpirado
+  nome: '',
+  respostas: new Array(perguntas.length).fill(null),
+  perguntaAtual: 0,
+  jaSalvouResultado: false,
+  tempoRestante: TEMPO_TOTAL_SEGUNDOS,
+  timerId: null
+};
+
+function pararTimer(){
+  if(state.timerId !== null){
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+
+function iniciarTimer(){
+  pararTimer();
+  state.tempoRestante = TEMPO_TOTAL_SEGUNDOS;
+  state.timerId = setInterval(()=>{
+    state.tempoRestante--;
+    if(state.tempoRestante <= 0){
+      pararTimer();
+      state.tempoRestante = 0;
+      state.tela = 'tempoExpirado';
+      render();
+      return;
+    }
+    // Atualiza apenas o texto/barra do timer sem re-renderizar tudo (evita perder foco em inputs, se houver)
+    atualizarTimerNaTela();
+  }, 1000);
+}
+
+function formatarTempo(segundos){
+  const m = Math.floor(segundos / 60);
+  const s = segundos % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function atualizarTimerNaTela(){
+  const el = document.getElementById('timerDisplay');
+  if(!el) return;
+  el.textContent = formatarTempo(state.tempoRestante);
+  const wrapper = document.getElementById('timerWrapper');
+  if(wrapper){
+    if(state.tempoRestante <= 30) wrapper.classList.add('warning');
+    else wrapper.classList.remove('warning');
+  }
+}
+
+function getRanking(){
+  try{
+    const raw = localStorage.getItem(RANKING_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function salvarResultado(nome, score){
+  const ranking = getRanking();
+  ranking.push({ nome, score, data: Date.now() });
+  ranking.sort((a,b)=> b.score - a.score || a.data - b.data);
+  localStorage.setItem(RANKING_KEY, JSON.stringify(ranking));
+}
+
+function calcularScore(){
+  let acertos = 0;
+  perguntas.forEach((p, i)=>{
+    if(state.respostas[i] === p.respostaCorreta) acertos++;
+  });
+  return acertos;
+}
+
+function resetarQuiz(manterNome){
+  pararTimer();
+  state.tela = 'boasVindas';
+  state.respostas = new Array(perguntas.length).fill(null);
+  state.perguntaAtual = 0;
+  state.jaSalvouResultado = false;
+  state.tempoRestante = TEMPO_TOTAL_SEGUNDOS;
+  if(!manterNome) state.nome = '';
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.tela === 'boasVindas') app.innerHTML = renderBoasVindas();
+  else if(state.tela === 'quiz') app.innerHTML = renderQuiz();
+  else if(state.tela === 'resultadoGanhou') app.innerHTML = renderResultadoGanhou();
+  else if(state.tela === 'resultadoPerdeu') app.innerHTML = renderResultadoPerdeu();
+  else if(state.tela === 'ranking') app.innerHTML = renderRanking();
+  else if(state.tela === 'tempoExpirado') app.innerHTML = renderTempoExpirado();
+  app.innerHTML += `<div class="footer">Direitos reservados à Illuminati 2026</div>`;
+  attachHandlers();
+}
+
+function renderRankingPreview(){
+  const ranking = getRanking().slice(0, 5);
+  if(ranking.length === 0){
+    return `
+      <div class="ranking-preview">
+        <div class="ranking-preview-titulo">🏆 RANKING</div>
+        <div class="empty-rank">Ainda não há jogadas registradas. Seja a primeira!</div>
+      </div>
+    `;
+  }
+  const itens = ranking.map((r, i)=>`
+    <div class="ranking-preview-item">
+      <div class="ranking-preview-pos">${i+1}º</div>
+      <div class="ranking-preview-nome">${escapeHtml(r.nome)}</div>
+      <div class="ranking-preview-score">${r.score}/${perguntas.length}</div>
+    </div>
+  `).join('');
+  return `
+    <div class="ranking-preview">
+      <div class="ranking-preview-titulo">🏆 RANKING</div>
+      <div class="ranking-preview-lista">${itens}</div>
+    </div>
+  `;
+}
+
+function renderBoasVindas(){
+  return `
+    <div class="card">
+      <h1>Quiz da Matriz SWOT</h1>
+      <p class="sub">Teste seus conhecimentos sobre análise SWOT com 10 cenários reais de empresas. Classifique cada situação como Força, Fraqueza, Oportunidade ou Ameaça e acerte pelo menos 7 para ganhar o prêmio.</p>
+      <input type="text" id="inputNome" placeholder="Digite seu nome para começar" value="${escapeHtml(state.nome)}" />
+      <button class="btn btn-primary" id="btnIniciar" ${state.nome.trim() ? '' : 'disabled'}>Iniciar Quiz</button>
+      ${renderRankingPreview()}
+    </div>
+  `;
+}
+
+function renderQuiz(){
+  const idx = state.perguntaAtual;
+  const p = perguntas[idx];
+  const total = perguntas.length;
+  const pct = Math.round(((idx+1)/total)*100);
+  const respostaSelecionada = state.respostas[idx];
+  const isUltima = idx === total - 1;
+
+  const opcoesHtml = p.opcoes.map((op, i)=>{
+    const selected = respostaSelecionada === i;
+    return `
+      <div class="opcao ${selected ? 'selected' : ''}" data-opcao="${i}">
+        <div class="radio"></div>
+        <div class="opcao-texto">${escapeHtml(op)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const timerWarning = state.tempoRestante <= 30 ? 'warning' : '';
+
+  return `
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>Pergunta <b>${idx+1}</b> de <b>${total}</b></span>
+        <div class="timer ${timerWarning}" id="timerWrapper">
+          <span class="timer-icon">⏱</span>
+          <span id="timerDisplay">${formatarTempo(state.tempoRestante)}</span>
+        </div>
+        <span>${pct}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tag">PERGUNTA ${String(idx+1).padStart(2,'0')}</div>
+      <div class="empresa">${escapeHtml(p.empresa)}</div>
+      <div class="contexto">${escapeHtml(p.contexto)}</div>
+      <div class="pergunta">${escapeHtml(p.pergunta)}</div>
+      <div class="opcoes">${opcoesHtml}</div>
+      <div class="footer-nav">
+        <button class="btn btn-secondary" id="btnAnterior" ${idx === 0 ? 'disabled' : ''}>← Anterior</button>
+        <button class="btn btn-primary" id="btnProximo" ${respostaSelecionada === null ? 'disabled' : ''}>
+          ${isUltima ? 'Finalizar Quiz' : 'Próximo →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderResultadoGanhou(){
+  const score = calcularScore();
+  return `
+    <div class="card center">
+      <div class="emoji">🎉</div>
+      <div class="resultado-titulo">Parabéns, você ganhou o prêmio!</div>
+      <div class="resultado-score">Você acertou <b>${score}/${perguntas.length}</b> questões</div>
+      <div class="stack">
+        <button class="btn btn-primary" id="btnVerRanking">Ver Ranking em Destaque</button>
+        <button class="btn btn-secondary" id="btnVoltarInicio">Voltar ao Início</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderResultadoPerdeu(){
+  const score = calcularScore();
+  return `
+    <div class="card center">
+      <div class="emoji">💡</div>
+      <div class="resultado-titulo">Quase lá!</div>
+      <p class="sub">Você não atingiu a pontuação mínima (7 acertos) para ganhar o prêmio.</p>
+      <div class="resultado-score">Sua pontuação: <b>${score}/${perguntas.length}</b></div>
+      <div class="stack">
+        <button class="btn btn-primary" id="btnTentarNovamente">Tentar Novamente</button>
+        <button class="btn btn-secondary" id="btnVerRanking">Ver Ranking</button>
+      </div>
+    </div>
+  `;
+}
+
+function dispararConfete(){
+  const canvas = document.createElement('canvas');
+  canvas.id = 'confetti-canvas';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const cores = ['#E50914', '#F4F4F5', '#FFB800', '#00C2A8', '#4A90E2'];
+  const particulas = [];
+  const total = 140;
+
+  for(let i=0; i<total; i++){
+    particulas.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * canvas.height * 0.5,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 10,
+      cor: cores[Math.floor(Math.random() * cores.length)],
+      velY: 2 + Math.random() * 3,
+      velX: -1.5 + Math.random() * 3,
+      rot: Math.random() * 360,
+      velRot: -6 + Math.random() * 12
+    });
+  }
+
+  let frames = 0;
+  const maxFrames = 240;
+
+  function animar(){
+    frames++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particulas.forEach(p=>{
+      p.x += p.velX;
+      p.y += p.velY;
+      p.rot += p.velRot;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+      ctx.fillStyle = p.cor;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    if(frames < maxFrames){
+      requestAnimationFrame(animar);
+    } else {
+      canvas.remove();
+    }
+  }
+  requestAnimationFrame(animar);
+}
+
+function renderTempoExpirado(){
+  return `
+    <div class="card center">
+      <div class="emoji">⏱</div>
+      <div class="resultado-titulo">O tempo expirou!</div>
+      <p class="sub">Você não concluiu o quiz dentro dos 5 minutos disponíveis. Volte ao início para tentar novamente.</p>
+      <button class="btn btn-primary" id="btnVoltarInicio">Voltar ao Início</button>
+    </div>
+  `;
+}
+
+function renderRanking(){
+  const ranking = getRanking();
+  let tabela = '';
+  if(ranking.length === 0){
+    tabela = `<div class="empty-rank">Ainda não há jogadas registradas.</div>`;
+  } else {
+    const linhas = ranking.map((r, i)=>{
+      const isAtual = state.jaSalvouResultado && r.nome === state.nome && r.score === calcularScore() && i === ranking.findIndex(x=>x.nome===state.nome && x.score===calcularScore());
+      return `
+        <tr class="${isAtual ? 'current-player' : ''}">
+          <td class="rank-pos">${i+1}º</td>
+          <td>${escapeHtml(r.nome)}</td>
+          <td>${r.score}/${perguntas.length}</td>
+        </tr>
+      `;
+    }).join('');
+    tabela = `
+      <table>
+        <thead>
+          <tr><th>#</th><th>Nome</th><th>Pontos</th></tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    `;
+  }
+
+  return `
+    <div class="card">
+      <h1>Ranking</h1>
+      <p class="sub">Classificação de todos os participantes, do maior para o menor número de acertos.</p>
+      ${tabela}
+      <button class="btn btn-primary" id="btnVoltarInicio" style="margin-top:24px">Voltar ao Início</button>
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function attachHandlers(){
+  if(state.tela === 'boasVindas'){
+    const input = document.getElementById('inputNome');
+    const btn = document.getElementById('btnIniciar');
+    input.addEventListener('input', (e)=>{
+      state.nome = e.target.value;
+      btn.disabled = !state.nome.trim();
+    });
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && state.nome.trim()){
+        state.tela = 'quiz';
+        iniciarTimer();
+        render();
+      }
+    });
+    btn.addEventListener('click', ()=>{
+      if(state.nome.trim()){
+        state.tela = 'quiz';
+        iniciarTimer();
+        render();
+      }
+    });
+  }
+
+  else if(state.tela === 'quiz'){
+    const idx = state.perguntaAtual;
+    document.querySelectorAll('.opcao').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const opcaoIdx = parseInt(el.getAttribute('data-opcao'));
+        state.respostas[idx] = opcaoIdx;
+        render();
+      });
+    });
+
+    const btnAnterior = document.getElementById('btnAnterior');
+    btnAnterior.addEventListener('click', ()=>{
+      if(idx > 0){
+        state.perguntaAtual--;
+        render();
+      }
+    });
+
+    const btnProximo = document.getElementById('btnProximo');
+    btnProximo.addEventListener('click', ()=>{
+      if(state.respostas[idx] === null) return;
+      if(idx < perguntas.length - 1){
+        state.perguntaAtual++;
+        render();
+      } else {
+        pararTimer();
+        const score = calcularScore();
+        if(!state.jaSalvouResultado){
+          salvarResultado(state.nome, score);
+          state.jaSalvouResultado = true;
+        }
+        state.tela = score >= 7 ? 'resultadoGanhou' : 'resultadoPerdeu';
+        render();
+      }
+    });
+  }
+
+  else if(state.tela === 'resultadoGanhou'){
+    dispararConfete();
+    document.getElementById('btnVerRanking').addEventListener('click', ()=>{
+      state.tela = 'ranking';
+      render();
+    });
+    document.getElementById('btnVoltarInicio').addEventListener('click', ()=>{
+      resetarQuiz(false);
+    });
+  }
+
+  else if(state.tela === 'resultadoPerdeu'){
+    document.getElementById('btnTentarNovamente').addEventListener('click', ()=>{
+      resetarQuiz(true);
+      state.tela = 'quiz';
+      iniciarTimer();
+      render();
+    });
+    document.getElementById('btnVerRanking').addEventListener('click', ()=>{
+      state.tela = 'ranking';
+      render();
+    });
+  }
+
+  else if(state.tela === 'ranking'){
+    document.getElementById('btnVoltarInicio').addEventListener('click', ()=>{
+      resetarQuiz(false);
+    });
+  }
+
+  else if(state.tela === 'tempoExpirado'){
+    document.getElementById('btnVoltarInicio').addEventListener('click', ()=>{
+      resetarQuiz(false);
+    });
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
