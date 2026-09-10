@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Quiz avaliativo com análise SWOT personalizada para Estudante, Empreendedor e Empregado." />
+<title>Quiz — Análise Estratégica</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-base:        oklch(0.145 0.015 25);
+  --bg-elevated-1:  oklch(0.185 0.018 25);
+  --bg-elevated-2:  oklch(0.225 0.020 25);
+  --bg-elevated-3:  oklch(0.265 0.022 25);
+
+  --text-primary:   oklch(0.975 0.006 80);
+  --text-secondary: oklch(0.720 0.014 25);
+  --text-tertiary:  oklch(0.560 0.018 25);
+
+  --accent:         oklch(0.580 0.220 25);
+  --accent-hover:   oklch(0.625 0.230 25);
+  --accent-soft:    oklch(0.580 0.220 25 / 0.12);
+  --accent-border:  oklch(0.580 0.220 25 / 0.35);
+
+  --border-subtle:  oklch(100% 0 0 / 0.08);
+  --border-strong:  oklch(100% 0 0 / 0.14);
+
+  --swot-s: oklch(0.62 0.18 145);
+  --swot-w: oklch(0.62 0.18 25);
+  --swot-o: oklch(0.72 0.16 85);
+  --swot-t: oklch(0.58 0.14 290);
+
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Outfit', system-ui, -apple-system, sans-serif;
+
+  --text-xs:   clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --text-sm:   clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --text-lg:   clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-xl:   clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl:  clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-3xl:  clamp(1.75rem, 1.3rem + 2.25vw, 2.625rem);
+  --text-4xl:  clamp(2rem, 1.4rem + 3vw, 3.5rem);
+  --text-5xl:  clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
+
+  --space-1:  clamp(0.2rem, 0.15rem + 0.25vw, 0.25rem);
+  --space-2:  clamp(0.4rem, 0.3rem + 0.5vw, 0.5rem);
+  --space-3:  clamp(0.6rem, 0.5rem + 0.5vw, 0.75rem);
+  --space-4:  clamp(0.8rem, 0.7rem + 0.5vw, 1rem);
+  --space-5:  clamp(1rem, 0.9rem + 0.5vw, 1.5rem);
+  --space-6:  clamp(1.25rem, 1.1rem + 0.75vw, 2rem);
+  --space-7:  clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
+  --space-8:  clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --space-9:  clamp(2.5rem, 2rem + 2.5vw, 4rem);
+  --space-10: clamp(3rem, 2.5rem + 2.5vw, 5rem);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 320ms;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.58 0.22 25 / 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, oklch(0.58 0.22 25 / 0.04), transparent 60%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+
+.app { position: relative; width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: oklch(0.145 0.015 25 / 0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-display); font-weight: 600; font-size: var(--text-base); letter-spacing: -0.01em; }
+.brand-mark { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, var(--accent), oklch(0.45 0.18 25)); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; color: var(--text-primary); font-size: var(--text-sm); box-shadow: inset 0 0 0 1px oklch(100% 0 0 / 0.15); }
+
+.topbar-actions { display: flex; gap: var(--space-2); }
+
+.icon-btn {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--duration) var(--ease);
+}
+.icon-btn:hover { color: var(--text-primary); background: var(--bg-elevated-1); border-color: var(--border-strong); }
+.icon-btn:active { transform: scale(0.96); }
+.icon-btn[disabled] { opacity: 0.35; cursor: not-allowed; }
+.icon-btn[disabled]:hover { background: transparent; color: var(--text-secondary); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+.screen {
+  flex: 1; width: 100%; max-width: 1120px; margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+  display: none;
+  animation: screenIn var(--duration) var(--ease) both;
+}
+.screen.is-active { display: block; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-body); font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+.eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+
+.display {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: var(--text-4xl); line-height: 1.05;
+  letter-spacing: -0.03em; color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  font-variation-settings: "opsz" 144;
+}
+.display em { font-style: italic; color: var(--accent); font-weight: 500; }
+
+.lede { font-size: var(--text-lg); line-height: 1.6; color: var(--text-secondary); max-width: 60ch; margin-bottom: var(--space-6); }
+
+/* HOME */
+.screen[data-screen="home"] { display: none; min-height: calc(100vh - 64px); padding-top: var(--space-8); padding-bottom: var(--space-10); }
+.screen[data-screen="home"].is-active { display: flex; flex-direction: column; justify-content: center; align-items: stretch; gap: var(--space-9); }
+
+.home-hero { width: 100%; max-width: 760px; margin: 0 auto; text-align: center; animation: heroIn 700ms var(--ease) both; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.home-hero .eyebrow { justify-content: center; }
+.home-hero .eyebrow::before { display: none; }
+.home-hero .eyebrow::after { content: ''; width: 24px; height: 1px; background: var(--accent); }
+.home-hero .display { font-size: var(--text-5xl); margin-bottom: var(--space-5); }
+.home-hero .lede { margin-left: auto; margin-right: auto; margin-bottom: 0; }
+
+.home-divider {
+  width: 100%; max-width: 760px; margin: 0 auto;
+  display: flex; align-items: center; gap: var(--space-4);
+  color: var(--text-tertiary); font-size: var(--text-xs);
+  letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
+  animation: dividerIn 700ms var(--ease) 150ms both;
+}
+.home-divider::before, .home-divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border-strong), transparent); }
+@keyframes dividerIn { from { opacity: 0; } to { opacity: 1; } }
+
+.home-options { width: 100%; max-width: 960px; margin: 0 auto; animation: optionsIn 700ms var(--ease) 300ms both; }
+@keyframes optionsIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.home-options-label { text-align: center; font-family: var(--font-display); font-size: var(--text-lg); color: var(--text-secondary); margin-bottom: var(--space-5); letter-spacing: -0.01em; }
+
+/* CHOICE 2 */
+.choice2-context {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+
+/* CARDS */
+.options-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+
+.option-card {
+  position: relative;
+  padding: var(--space-5);
+  min-height: 140px;
+  background: var(--bg-elevated-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  color: var(--text-primary);
+  transition: all var(--duration) var(--ease);
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: var(--space-4);
+  overflow: hidden;
+  cursor: pointer;
+}
+.option-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), oklch(0.58 0.22 25 / 0.12), transparent 50%);
+  opacity: 0; transition: opacity var(--duration) var(--ease);
+  pointer-events: none;
+}
+.option-card:hover { border-color: var(--accent-border); background: var(--bg-elevated-2); transform: translateY(-2px); }
+.option-card:hover::before { opacity: 1; }
+.option-card:active { transform: translateY(0) scale(0.99); }
+
+.option-index { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.option-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: var(--text-primary); }
+.option-desc { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.55; }
+
+.option-arrow {
+  align-self: flex-end;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg-elevated-2);
+  display: grid; place-items: center;
+  color: var(--text-secondary);
+  transition: all var(--duration) var(--ease);
+}
+.option-card:hover .option-arrow { background: var(--accent); color: var(--text-primary); transform: translateX(4px); }
+.option-arrow svg { width: 16px; height: 16px; }
+
+/* QUIZ */
+.quiz-shell { max-width: 760px; margin: 0 auto; }
+
+.quiz-context {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+.quiz-context-chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-elevated-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.quiz-context-chip strong { color: var(--text-primary); font-weight: 600; text-transform: none; letter-spacing: 0; }
+
+.progress { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-6); }
+.progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--text-sm); color: var(--text-secondary); }
+.progress-meta strong { color: var(--text-primary); font-weight: 600; font-family: var(--font-display); font-size: var(--text-lg); letter-spacing: -0.01em; }
+
+.progress-track { position: relative; height: 4px; background: var(--bg-elevated-2); border-radius: 2px; overflow: hidden; }
+.progress-fill { position: absolute; inset: 0 auto 0 0; width: 0%; background: linear-gradient(90deg, var(--accent), oklch(0.68 0.22 25)); border-radius: 2px; transition: width 500ms var(--ease); }
+
+.question-card {
+  background: var(--bg-elevated-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  animation: questionIn 420ms var(--ease) both;
+}
+@keyframes questionIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+
+.question-number { font-family: var(--font-display); font-size: var(--text-sm); letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: var(--space-2); }
+.question-text { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: var(--space-5); font-variation-settings: "opsz" 144; }
+
+.choices { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.choice {
+  position: relative;
+  display: flex; align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  text-align: left;
+  color: var(--text-primary);
+  min-height: 60px;
+  transition: all var(--duration) var(--ease);
+}
+.choice:hover { background: var(--bg-elevated-3); border-color: var(--border-strong); transform: translateX(4px); }
+.choice:active { transform: translateX(2px) scale(0.995); }
+
+.choice.is-selected { background: var(--accent-soft); border-color: var(--accent); }
+.choice.is-selected .choice-indicator { background: var(--accent); border-color: var(--accent); color: var(--text-primary); }
+.choice.is-selected .choice-indicator svg { opacity: 1; transform: scale(1); }
+
+.choice-indicator { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--bg-elevated-1); display: grid; place-items: center; transition: all var(--duration) var(--ease); }
+.choice-indicator svg { width: 14px; height: 14px; opacity: 0; transform: scale(0.5); transition: all var(--duration) var(--ease); }
+
+.choice-letter { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.05em; color: var(--text-tertiary); margin-right: var(--space-1); }
+.choice.is-selected .choice-letter { color: var(--accent); }
+.choice-text { font-size: var(--text-base); line-height: 1.5; flex: 1; }
+
+.quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-top: var(--space-6); }
+
+/* BOTÕES */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  min-height: 48px;
+  font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: all var(--duration) var(--ease);
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.98); }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn[disabled]:hover { transform: none; }
+
+.btn-primary { background: var(--accent); color: var(--text-primary); box-shadow: 0 1px 0 oklch(100% 0 0 / 0.15) inset, 0 8px 24px -8px oklch(0.58 0.22 25 / 0.5); }
+.btn-primary:hover:not([disabled]) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 1px 0 oklch(100% 0 0 / 0.2) inset, 0 12px 28px -8px oklch(0.58 0.22 25 / 0.6); }
+
+.btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border-subtle); }
+.btn-ghost:hover:not([disabled]) { color: var(--text-primary); background: var(--bg-elevated-1); border-color: var(--border-strong); }
+.btn svg { width: 16px; height: 16px; }
+
+/* RESULTADO */
+.result-header { text-align: center; max-width: 720px; margin: 0 auto var(--space-6); }
+.result-context {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.swot-matrix { display: grid; grid-template-columns: 1fr; gap: var(--space-3); margin-bottom: var(--space-6); }
+
+.swot-cell {
+  position: relative;
+  padding: var(--space-5);
+  background: var(--bg-elevated-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  color: var(--text-primary);
+  min-height: 180px;
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  transition: all var(--duration) var(--ease);
+  overflow: hidden;
+  cursor: pointer;
+}
+.swot-cell::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--cell-color, var(--accent)); transform: scaleX(0); transform-origin: left; transition: transform 500ms var(--ease); }
+
+.swot-cell:hover { background: var(--bg-elevated-2); transform: translateY(-3px); border-color: var(--cell-color, var(--accent-border)); }
+.swot-cell:hover::before { transform: scaleX(1); }
+.swot-cell:active { transform: translateY(-1px) scale(0.995); }
+
+.swot-cell[data-quadrant="S"] { --cell-color: var(--swot-s); }
+.swot-cell[data-quadrant="W"] { --cell-color: var(--swot-w); }
+.swot-cell[data-quadrant="O"] { --cell-color: var(--swot-o); }
+.swot-cell[data-quadrant="T"] { --cell-color: var(--swot-t); }
+
+.swot-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.swot-label { display: flex; align-items: center; gap: var(--space-2); }
+.swot-letter { width: 40px; height: 40px; border-radius: 10px; background: oklch(from var(--cell-color) l c h / 0.15); color: var(--cell-color); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); font-style: italic; }
+.swot-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600; letter-spacing: -0.015em; }
+.swot-meta-row { display: flex; flex-direction: column; gap: 2px; }
+.swot-score-line { display: flex; align-items: baseline; gap: var(--space-2); }
+.swot-score { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 600; color: var(--cell-color); letter-spacing: -0.02em; }
+.swot-percent { font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: 0.05em; }
+
+.swot-summary { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; flex: 1; }
+
+.swot-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: auto; }
+.swot-tag {
+  font-size: var(--text-xs);
+  padding: 3px 8px;
+  background: oklch(from var(--cell-color) l c h / 0.10);
+  color: var(--cell-color);
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.swot-cta { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: 600; color: var(--cell-color); margin-top: var(--space-2); }
+.swot-cta svg { width: 14px; height: 14px; transition: transform var(--duration) var(--ease); }
+.swot-cell:hover .swot-cta svg { transform: translateX(4px); }
+
+.result-footer { display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: oklch(0.08 0.02 25 / 0.75);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: var(--space-4);
+  animation: fadeIn 240ms var(--ease) both;
+}
+.modal-backdrop.is-open { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  position: relative;
+  width: 100%; max-width: 680px;
+  max-height: 90vh; overflow-y: auto;
+  background: var(--bg-elevated-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  animation: modalIn 360ms var(--ease) both;
+}
+@keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.modal-close { position: absolute; top: var(--space-3); right: var(--space-3); width: 40px; height: 40px; border-radius: 50%; background: var(--bg-elevated-2); display: grid; place-items: center; color: var(--text-secondary); transition: all var(--duration) var(--ease); }
+.modal-close:hover { color: var(--text-primary); background: var(--bg-elevated-3); }
+.modal-close svg { width: 16px; height: 16px; }
+
+.modal-quadrant { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); background: oklch(from var(--cell-color) l c h / 0.15); color: var(--cell-color); border-radius: 999px; font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-4); }
+.modal-quadrant-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cell-color); }
+
+.modal-title { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: var(--space-3); }
+
+.modal-score-line { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.modal-score-value { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 600; color: var(--cell-color); letter-spacing: -0.02em; }
+.modal-score-label { font-size: var(--text-sm); color: var(--text-secondary); }
+
+.modal-intro { font-size: var(--text-base); line-height: 1.6; color: var(--text-secondary); margin-bottom: var(--space-5); }
+
+.diagnostic-list { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-5); }
+.diagnostic-item {
+  padding: var(--space-4);
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--cell-color);
+  border-radius: var(--radius-md);
+}
+.diagnostic-item-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+}
+.diagnostic-item-analysis { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-2); }
+.diagnostic-item-rec {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.55;
+  padding: var(--space-2) var(--space-3);
+  background: oklch(from var(--cell-color) l c h / 0.08);
+  border-radius: var(--radius-sm);
+}
+.diagnostic-item-rec strong { color: var(--cell-color); font-weight: 600; display: block; font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+
+.modal-empty {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-style: italic;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+/* UTILITÁRIOS */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* RESPONSIVO */
+@media (min-width: 640px) {
+  .topbar { padding: var(--space-4) var(--space-5); }
+  .screen { padding: var(--space-7) var(--space-5) var(--space-9); }
+  .options-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  .swot-matrix { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .question-card { padding: var(--space-6); }
+  .modal { padding: var(--space-6); }
+}
+
+@media (min-width: 860px) {
+  .topbar { padding: var(--space-4) var(--space-6); }
+  .screen { padding: var(--space-8) var(--space-6) var(--space-10); }
+  .swot-matrix { gap: var(--space-5); }
+}
+
+/* IMPRESSÃO */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  body { background: white !important; color: black !important; font-size: 11pt; }
+  .topbar, .modal-backdrop, .result-footer, .icon-btn, .btn { display: none !important; }
+  .screen { display: block !important; padding: 0 !important; max-width: 100% !important; }
+  .screen:not([data-screen="result"]) { display: none !important; }
+  .result-header { page-break-after: avoid; }
+  .swot-matrix { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12pt !important; page-break-inside: avoid; }
+  .swot-cell { background: white !important; border: 2pt solid currentColor !important; color: black !important; page-break-inside: avoid; min-height: auto !important; cursor: default !important; }
+  .swot-cell::before { display: none !important; }
+  .swot-letter { background: currentColor !important; color: white !important; }
+  .swot-cell[data-quadrant="S"] { color: #2d8659 !important; }
+  .swot-cell[data-quadrant="W"] { color: #c92a2a !important; }
+  .swot-cell[data-quadrant="O"] { color: #e67700 !important; }
+  .swot-cell[data-quadrant="T"] { color: #7048e8 !important; }
+  .swot-title, .swot-score, .swot-summary, .swot-percent { color: black !important; }
+  .swot-cta, .swot-tags { display: none !important; }
+  .pdf-analysis { display: block !important; page-break-before: always; padding: 20pt 0; }
+  .pdf-analysis-section { page-break-inside: avoid; margin-bottom: 20pt; }
+  .pdf-analysis-title { font-size: 16pt; font-weight: 700; margin-bottom: 8pt; page-break-after: avoid; }
+  .pdf-analysis-content { font-size: 11pt; line-height: 1.6; }
+  .pdf-diagnostic { margin-bottom: 10pt; padding: 8pt; border-left: 3pt solid currentColor; }
+  .pdf-diagnostic-title { font-weight: 700; margin-bottom: 4pt; }
+  .pdf-diagnostic-rec { font-style: italic; font-size: 10pt; }
+}
+.pdf-analysis { display: none; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="topbar" role="banner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">Q</div>
+      <span>Quiz Estratégico</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btn-back" aria-label="Voltar para a etapa anterior" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-restart-top" aria-label="Recomeçar o quiz">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HOME -->
+    <section class="screen is-active" data-screen="home" aria-labelledby="home-title">
+      <div class="home-hero">
+        <span class="eyebrow">Diagnóstico estratégico</span>
+        <h1 class="display" id="home-title">Descubra seu perfil com uma análise <em>SWOT</em> personalizada.</h1>
+        <p class="lede">Cinco perguntas estratégicas. Um mapa claro de forças, fraquezas, oportunidades e ameaças — construído a partir das suas próprias respostas.</p>
+      </div>
+
+      <div class="home-divider" aria-hidden="true"><span>Qual perfil representa você?</span></div>
+
+      <div class="home-options">
+        <p class="home-options-label">Selecione a opção que melhor descreve sua situação atual.</p>
+        <div class="options-grid" id="options-home" role="list"></div>
+      </div>
+    </section>
+
+    <!-- CHOICE 2 — TEMA -->
+    <section class="screen" data-screen="choice2" aria-labelledby="choice2-title">
+      <div class="choice2-context" id="choice2-context">Perfil: —</div>
+      <span class="eyebrow">Etapa 2 de 3</span>
+      <h2 class="display" id="choice2-title">O que você quer <em>analisar</em>?</h2>
+      <p class="lede">Selecione o tema que será o foco da sua análise SWOT.</p>
+      <div class="options-grid" id="options-choice2" role="list"></div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" data-screen="quiz" aria-labelledby="quiz-title">
+      <div class="quiz-shell">
+        <div class="quiz-context" id="quiz-context"></div>
+
+        <div class="progress" role="group" aria-label="Progresso do quiz">
+          <div class="progress-meta">
+            <span id="quiz-title">Pergunta <strong id="q-current">1</strong> de <strong id="q-total">5</strong></span>
+            <span id="q-percent">0%</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+
+        <article class="question-card" id="question-card">
+          <div class="question-number" id="q-label">Pergunta 01</div>
+          <h2 class="question-text" id="q-text"></h2>
+          <div class="choices" id="choices" role="radiogroup" aria-label="Alternativas"></div>
+        </article>
+
+        <nav class="quiz-nav" aria-label="Navegação do quiz">
+          <button class="btn btn-ghost" id="btn-prev" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Anterior
+          </button>
+          <button class="btn btn-primary" id="btn-next" disabled>
+            Próxima
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- RESULTADO -->
+    <section class="screen" data-screen="result" aria-labelledby="result-title">
+      <div class="result-header">
+        <div class="result-context" id="result-context"></div>
+        <span class="eyebrow">Seu diagnóstico</span>
+        <h2 class="display" id="result-title">Sua análise <em>SWOT</em></h2>
+        <p class="lede" style="margin-left:auto;margin-right:auto;">Clique em cada quadrante para ver os diagnósticos, análises e recomendações baseados nas suas respostas.</p>
+      </div>
+
+      <div class="swot-matrix" id="swot-matrix" role="list"></div>
+
+      <div class="pdf-analysis" id="pdf-analysis"></div>
+
+      <div class="result-footer">
+        <button class="btn btn-primary" data-action="generate-pdf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Gerar PDF
+        </button>
+        <button class="btn btn-ghost" data-action="back-result">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Refazer quiz
+        </button>
+        <button class="btn btn-ghost" data-action="restart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          Recomeçar do início
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Fechar análise">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="modal-quadrant" id="modal-quadrant">
+      <span class="modal-quadrant-dot"></span>
+      <span id="modal-quadrant-label">Forças</span>
+    </div>
+
+    <h3 class="modal-title" id="modal-title">Análise detalhada</h3>
+
+    <div class="modal-score-line">
+      <span class="modal-score-value" id="modal-score">0</span>
+      <span class="modal-score-label" id="modal-score-label">pontos</span>
+    </div>
+
+    <p class="modal-intro" id="modal-intro"></p>
+
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ============================================================
+   BANCO DE DADOS DO QUIZ
+   3 perfis × 3 temas × 5 perguntas × 3 alternativas = 135 diagnósticos
+   ============================================================
+   ============================================================ */
+
+const PROFILES = {
+  estudante: {
+    id: 'estudante',
+    index: '01',
+    title: 'Estudante',
+    desc: 'Pessoa em formação escolar ou acadêmica que deseja avaliar sua situação financeira, seu ambiente educacional e sua preparação para os próximos cinco anos.',
+  },
+  empreendedor: {
+    id: 'empreendedor',
+    index: '02',
+    title: 'Empreendedor',
+    desc: 'Pessoa que possui ou conduz um negócio e deseja avaliar sua saúde financeira, seu ambiente organizacional e a preparação estratégica da empresa para os próximos cinco anos.',
+  },
+  empregado: {
+    id: 'empregado',
+    index: '03',
+    title: 'Empregado',
+    desc: 'Pessoa que trabalha como funcionário e deseja avaliar sua situação financeira, seu ambiente profissional e sua perspectiva de carreira para os próximos cinco anos.',
+  },
+};
+
+const TOPICS = {
+  saudeFinanceira: {
+    id: 'saudeFinanceira',
+    index: '01',
+    title: 'Saúde Financeira',
+    desc: 'Avalia sua organização financeira, capacidade de lidar com imprevistos, controle de recursos, dívidas, metas e capacidade de construção patrimonial.',
+  },
+  ambienteOrganizacional: {
+    id: 'ambienteOrganizacional',
+    index: '02',
+    title: 'Ambiente Organizacional',
+    desc: 'Avalia a qualidade do ambiente em que você estuda ou trabalha, relações interpessoais, estrutura, liderança, reconhecimento, organização e bem-estar.',
+  },
+  visaoFuturo: {
+    id: 'visaoFuturo',
+    index: '03',
+    title: 'Visão de Futuro (5 Anos)',
+    desc: 'Avalia sua clareza de objetivos, preparação profissional, adaptação tecnológica, capacidade de mudança e preparação para o futuro.',
+  },
+};
+
+/* ============================================================
+   QUIZ_DATA — estrutura hierárquica com todas as 45 perguntas
+   Cada alternativa possui: text + result { quadrant, title, analysis, recommendation, score }
+   ============================================================ */
+const QUIZ_DATA = {
+
+  /* ==========================================================
+     ESTUDANTE
+     ========================================================== */
+  estudante: {
+
+    /* ---------- SAÚDE FINANCEIRA ---------- */
+    saudeFinanceira: [
+      {
+        id: 'e-sf-q1',
+        text: 'Como você administra o dinheiro que recebe (mesada, estágio ou renda própria)?',
+        choices: [
+          { id: 'e-sf-q1-a', text: 'Mantenho uma planilha/aplicativo, guardo uma parte mensalmente e me planejo.',
+            result: { quadrant: 'S', title: 'Organização financeira', score: 3,
+              analysis: 'Você demonstra controle sobre sua renda e capacidade de planejar seus gastos e reservas.',
+              recommendation: 'Continue acompanhando seu orçamento e transforme o hábito de guardar dinheiro em uma meta crescente.' } },
+          { id: 'e-sf-q1-b', text: 'Gasto com o básico e lazer; raramente sobra algo para guardar.',
+            result: { quadrant: 'W', title: 'Baixa capacidade de poupança', score: 1,
+              analysis: 'Sua renda atualmente é direcionada principalmente ao consumo imediato, deixando pouca margem para formação de reserva.',
+              recommendation: 'Estabeleça uma pequena porcentagem fixa para guardar assim que receber.' } },
+          { id: 'e-sf-q1-c', text: 'Gasto tudo no início do mês e frequentemente fico sem dinheiro no final.',
+            result: { quadrant: 'W', title: 'Falta de planejamento financeiro', score: 1,
+              analysis: 'O consumo concentrado no início do período indica dificuldade de administrar recursos ao longo do mês.',
+              recommendation: 'Divida seu dinheiro por categorias e estabeleça limites de gasto.' } },
+        ],
+      },
+      {
+        id: 'e-sf-q2',
+        text: 'Qual é o seu nível de estudo sobre investimentos e educação financeira?',
+        choices: [
+          { id: 'e-sf-q2-a', text: 'Já busco conteúdos por conta própria (livros, vídeos, cursos) e aplico o que aprendo.',
+            result: { quadrant: 'S', title: 'Autonomia financeira', score: 3,
+              analysis: 'Você demonstra iniciativa para aprender e aplicar conhecimentos financeiros na prática.',
+              recommendation: 'Continue diversificando seus conhecimentos e desenvolvendo uma estratégia financeira de longo prazo.' } },
+          { id: 'e-sf-q2-b', text: 'Conheço apenas o básico (como poupança), mas não pesquiso novas opções.',
+            result: { quadrant: 'W', title: 'Conhecimento financeiro limitado', score: 2,
+              analysis: 'Você possui uma base inicial, mas ainda utiliza pouco do potencial da educação financeira.',
+              recommendation: 'Amplie gradualmente seus conhecimentos sobre orçamento, investimentos, juros e planejamento.' } },
+          { id: 'e-sf-q2-c', text: 'Não entendo sobre o assunto e acho algo chato ou distante de mim.',
+            result: { quadrant: 'W', title: 'Baixa educação financeira', score: 1,
+              analysis: 'A falta de conhecimento pode dificultar decisões financeiras importantes no futuro.',
+              recommendation: 'Comece por conteúdos simples e práticos relacionados à sua realidade.' } },
+        ],
+      },
+      {
+        id: 'e-sf-q3',
+        text: 'Se surgisse uma emergência hoje (ex: consertar o celular ou comprar um livro essencial), o que faria?',
+        choices: [
+          { id: 'e-sf-q3-a', text: 'Tenho minha própria reserva de emergência guardada para isso.',
+            result: { quadrant: 'S', title: 'Autonomia diante de emergências', score: 3,
+              analysis: 'Você possui uma reserva que reduz sua dependência de terceiros diante de imprevistos.',
+              recommendation: 'Mantenha a reserva e revise periodicamente se ela continua adequada às suas necessidades.' } },
+          { id: 'e-sf-q3-b', text: 'Dependeria de pedir ajuda financeira aos pais ou responsáveis.',
+            result: { quadrant: 'W', title: 'Dependência financeira', score: 2,
+              analysis: 'Sua capacidade de lidar com imprevistos ainda depende de apoio externo.',
+              recommendation: 'Comece construindo uma pequena reserva própria.' } },
+          { id: 'e-sf-q3-c', text: 'Ficaria sem o equipamento por não ter dinheiro nem apoio imediato.',
+            result: { quadrant: 'W', title: 'Ausência de reserva', score: 1,
+              analysis: 'Você apresenta pouca capacidade de absorver despesas inesperadas.',
+              recommendation: 'Priorize a formação de uma reserva financeira básica.' } },
+        ],
+      },
+      {
+        id: 'e-sf-q4',
+        text: 'Como você lida com promoções ou desejos de compra no dia a dia?',
+        choices: [
+          { id: 'e-sf-q4-a', text: 'Avalio se realmente preciso do item e se cabe no meu planejamento antes de comprar.',
+            result: { quadrant: 'S', title: 'Consumo consciente', score: 3,
+              analysis: 'Você demonstra capacidade de controlar impulsos e tomar decisões de compra de acordo com seu planejamento.',
+              recommendation: 'Mantenha esse comportamento e use critérios objetivos antes de compras maiores.' } },
+          { id: 'e-sf-q4-b', text: 'Compro por impulso às vezes, mas me arrependo quando vejo o saldo.',
+            result: { quadrant: 'W', title: 'Impulsividade financeira', score: 2,
+              analysis: 'Compras impulsivas ocasionalmente comprometem seu planejamento financeiro.',
+              recommendation: 'Adote um período de espera antes de compras não essenciais.' } },
+          { id: 'e-sf-q4-c', text: 'Compro sempre que tenho limite/dinheiro disponível, sem pensar no amanhã.',
+            result: { quadrant: 'W', title: 'Ausência de planejamento de consumo', score: 1,
+              analysis: 'O consumo baseado apenas na disponibilidade imediata reduz sua capacidade de construir segurança financeira.',
+              recommendation: 'Defina metas financeiras antes de utilizar sua renda disponível.' } },
+        ],
+      },
+      {
+        id: 'e-sf-q5',
+        text: 'Você possui metas financeiras definidas para quando terminar os estudos?',
+        choices: [
+          { id: 'e-sf-q5-a', text: 'Sim, sei exatamente quanto preciso para faculdade, cursos, intercâmbio ou equipamentos.',
+            result: { quadrant: 'S', title: 'Planejamento de longo prazo', score: 3,
+              analysis: 'Você possui objetivos financeiros concretos e consegue relacioná-los ao futuro acadêmico e profissional.',
+              recommendation: 'Transforme seus objetivos em metas mensais e acompanhe sua evolução.' } },
+          { id: 'e-sf-q5-b', text: 'Tenho uma ideia vaga de que quero juntar dinheiro, mas sem metas específicas.',
+            result: { quadrant: 'W', title: 'Objetivos pouco definidos', score: 2,
+              analysis: 'Existe intenção de poupar, mas sem metas concretas é mais difícil acompanhar o progresso.',
+              recommendation: 'Defina valores, prazos e prioridades para cada objetivo.' } },
+          { id: 'e-sf-q5-c', text: 'Vivo apenas o presente e não planejo custos futuros.',
+            result: { quadrant: 'W', title: 'Baixa orientação para o futuro', score: 1,
+              analysis: 'A ausência de planejamento pode dificultar sua preparação para despesas acadêmicas e profissionais.',
+              recommendation: 'Comece definindo pelo menos um objetivo financeiro de médio prazo.' } },
+        ],
+      },
+    ],
+
+    /* ---------- AMBIENTE ORGANIZACIONAL ---------- */
+    ambienteOrganizacional: [
+      {
+        id: 'e-ao-q1',
+        text: 'Como é o clima de convivência e o trabalho em equipe na sua turma?',
+        choices: [
+          { id: 'e-ao-q1-a', text: 'Colaborativo, acolhedor e com constante troca de conhecimentos.',
+            result: { quadrant: 'S', title: 'Ambiente colaborativo', score: 3,
+              analysis: 'Você está inserido em uma rede acadêmica saudável que favorece aprendizado e cooperação.',
+              recommendation: 'Aproveite esse ambiente para criar projetos em grupo e fortalecer vínculos profissionais duradouros.' } },
+          { id: 'e-ao-q1-b', text: 'Competitivo em alguns momentos, mas funcional na maior parte do tempo.',
+            result: { quadrant: 'S', title: 'Convivência funcional', score: 2,
+              analysis: 'O ambiente apresenta competitividade, mas ainda permite colaboração e funcionamento adequado.',
+              recommendation: 'Busque equilibrar competição saudável com momentos genuínos de cooperação.' } },
+          { id: 'e-ao-q1-c', text: 'Tóxico, marcado por fofocas, divisões ("panelinhas") e exclusão.',
+            result: { quadrant: 'W', title: 'Ambiente acadêmico negativo', score: 1,
+              analysis: 'A convivência prejudica o desenvolvimento e pode reduzir integração e aprendizado.',
+              recommendation: 'Procure grupos de estudo externos ou atividades extracurriculares que ofereçam um ambiente mais saudável.' } },
+        ],
+      },
+      {
+        id: 'e-ao-q2',
+        text: 'Como os professores ou coordenadores reagem quando você erra ou faz perguntas?',
+        choices: [
+          { id: 'e-ao-q2-a', text: 'Incentivam a dúvida e utilizam o erro como uma oportunidade de aprendizado.',
+            result: { quadrant: 'S', title: 'Cultura de aprendizagem', score: 3,
+              analysis: 'O ambiente favorece desenvolvimento por meio de dúvidas, experimentação e aprendizado com erros.',
+              recommendation: 'Aproveite essa abertura para aprofundar temas e construir uma relação produtiva com seus orientadores.' } },
+          { id: 'e-ao-q2-b', text: 'Respondem à dúvida, mas demonstrando impaciência ou pressa.',
+            result: { quadrant: 'W', title: 'Baixa abertura ao diálogo', score: 2,
+              analysis: 'Existe suporte, mas a comunicação limitada pode dificultar o processo de aprendizagem.',
+              recommendation: 'Formule perguntas objetivas e busque horários de atendimento para aprofundar dúvidas.' } },
+          { id: 'e-ao-q2-c', text: 'Ocorrem comentários irônicos, julgamentos ou simples desinteresse.',
+            result: { quadrant: 'W', title: 'Ambiente pouco acolhedor', score: 1,
+              analysis: 'A reação negativa às dúvidas pode inibir participação e desenvolvimento.',
+              recommendation: 'Procure canais alternativos de aprendizado (monitoria, grupos de estudo, plataformas online).' } },
+        ],
+      },
+      {
+        id: 'e-ao-q3',
+        text: 'A instituição fornece estrutura física e digital adequada para o seu desenvolvimento?',
+        choices: [
+          { id: 'e-ao-q3-a', text: 'Sim, laboratórios, biblioteca e ferramentas virtuais funcionam muito bem.',
+            result: { quadrant: 'S', title: 'Boa estrutura educacional', score: 3,
+              analysis: 'Você conta com recursos adequados que potencializam seu aprendizado e desenvolvimento acadêmico.',
+              recommendation: 'Explore ao máximo os recursos disponíveis — eles são um diferencial na sua formação.' } },
+          { id: 'e-ao-q3-b', text: 'A estrutura é razoável, embora falte manutenção periódica em alguns recursos.',
+            result: { quadrant: 'W', title: 'Limitações estruturais', score: 2,
+              analysis: 'A instituição oferece o básico, mas algumas lacunas podem impactar sua experiência acadêmica.',
+              recommendation: 'Complemente com recursos externos (bibliotecas públicas, plataformas online, cursos abertos).' } },
+          { id: 'e-ao-q3-c', text: 'A estrutura é muito precária, atrapalhando diretamente o aprendizado.',
+            result: { quadrant: 'W', title: 'Estrutura deficiente', score: 1,
+              analysis: 'A falta de recursos adequados está impactando negativamente sua formação.',
+              recommendation: 'Busque canais de representação estudantil para cobrar melhorias e complemente sua formação externamente.' } },
+        ],
+      },
+      {
+        id: 'e-ao-q4',
+        text: 'Qual é o nível de estresse e pressão gerado pela sua rotina acadêmica?',
+        choices: [
+          { id: 'e-ao-q4-a', text: 'Equilibrado: consigo cumprir prazos sem comprometer minha saúde mental.',
+            result: { quadrant: 'S', title: 'Equilíbrio acadêmico', score: 3,
+              analysis: 'Você mantém uma rotina saudável que combina produtividade e bem-estar.',
+              recommendation: 'Continue aplicando suas estratégias de organização e preserve momentos de descanso.' } },
+          { id: 'e-ao-q4-b', text: 'Tenho picos de ansiedade e estresse em semanas de provas ou trabalhos finais.',
+            result: { quadrant: 'W', title: 'Pressão acadêmica', score: 2,
+              analysis: 'Períodos de maior carga geram estresse pontual, mas ainda administrável.',
+              recommendation: 'Antecipe entregas e pratique técnicas de gestão de tempo para reduzir picos de pressão.' } },
+          { id: 'e-ao-q4-c', text: 'Sinto exaustão constante, desmotivação e receio frequente de ir às aulas.',
+            result: { quadrant: 'W', title: 'Sobrecarga acadêmica', score: 1,
+              analysis: 'A carga atual está comprometendo seu bem-estar e pode afetar seu desempenho.',
+              recommendation: 'Reavalie sua carga de atividades, busque apoio institucional e priorize sua saúde mental.' } },
+        ],
+      },
+      {
+        id: 'e-ao-q5',
+        text: 'Os estudantes têm voz para propor melhorias ou expressar opiniões na instituição?',
+        choices: [
+          { id: 'e-ao-q5-a', text: 'Sim, grêmio, representantes ou canais diretos mantêm diálogo aberto com a direção.',
+            result: { quadrant: 'S', title: 'Participação estudantil', score: 3,
+              analysis: 'Você está em um ambiente que valoriza a voz discente e promove democracia institucional.',
+              recommendation: 'Participe ativamente desses canais — é uma oportunidade valiosa de desenvolvimento de liderança.' } },
+          { id: 'e-ao-q5-b', text: 'Somos ouvidos em reuniões, mas poucas sugestões são realmente aplicadas.',
+            result: { quadrant: 'W', title: 'Baixa efetividade da participação', score: 2,
+              analysis: 'Existem canais de escuta, mas o impacto real das sugestões é limitado.',
+              recommendation: 'Documente propostas com dados e busque aliados para dar mais força às suas iniciativas.' } },
+          { id: 'e-ao-q5-c', text: 'Não há espaço para sugestões; todas as regras são impostas de forma rígida.',
+            result: { quadrant: 'W', title: 'Baixa participação institucional', score: 1,
+              analysis: 'A ausência de canais de diálogo limita sua capacidade de influenciar o ambiente acadêmico.',
+              recommendation: 'Considere mobilizar colegas para criar canais alternativos de representação estudantil.' } },
+        ],
+      },
+    ],
+
+    /* ---------- VISÃO DE FUTURO ---------- */
+    visaoFuturo: [
+      {
+        id: 'e-vf-q1',
+        text: 'Você possui clareza sobre qual profissão ou área deseja seguir nos próximos 5 anos?',
+        choices: [
+          { id: 'e-vf-q1-a', text: 'Tenho clareza do caminho que quero seguir e dos passos necessários.',
+            result: { quadrant: 'S', title: 'Clareza profissional', score: 3,
+              analysis: 'Você possui direção definida e consegue mapear os passos necessários para alcançar seus objetivos.',
+              recommendation: 'Transforme sua clareza em um plano escrito com metas de curto, médio e longo prazo.' } },
+          { id: 'e-vf-q1-b', text: 'Tenho dúvida entre 2 ou 3 áreas e ainda estou pesquisando opções.',
+            result: { quadrant: 'O', title: 'Exploração de possibilidades', score: 2,
+              analysis: 'Você está em um momento produtivo de investigação, o que pode levar a uma escolha mais consistente.',
+              recommendation: 'Experimente cada área por meio de cursos rápidos, projetos ou conversas com profissionais.' } },
+          { id: 'e-vf-q1-c', text: 'Não faço ideia do que seguir e prefiro evitar pensar no assunto.',
+            result: { quadrant: 'W', title: 'Falta de direção profissional', score: 1,
+              analysis: 'A ausência de reflexão sobre o futuro pode limitar suas escolhas acadêmicas e profissionais.',
+              recommendation: 'Reserve um tempo para autoconhecimento e explore diferentes áreas sem pressão imediata.' } },
+        ],
+      },
+      {
+        id: 'e-vf-q2',
+        text: 'O que você faz atualmente para construir seu futuro além do currículo obrigatório?',
+        choices: [
+          { id: 'e-vf-q2-a', text: 'Faço cursos livres, estudo idiomas, participo de eventos técnicos ou projetos sociais.',
+            result: { quadrant: 'S', title: 'Desenvolvimento extracurricular', score: 3,
+              analysis: 'Você investe ativamente em competências complementares que ampliam suas possibilidades.',
+              recommendation: 'Documente essas experiências e construa um portfólio que demonstre seu diferencial.' } },
+          { id: 'e-vf-q2-b', text: 'Faço apenas o mínimo exigido pelas disciplinas regulares da escola/faculdade.',
+            result: { quadrant: 'W', title: 'Baixa iniciativa de desenvolvimento', score: 2,
+              analysis: 'Você cumpre obrigações acadêmicas, mas perde oportunidades de diferenciação no mercado.',
+              recommendation: 'Escolha pelo menos uma atividade extracurricular alinhada aos seus interesses e comece já.' } },
+          { id: 'e-vf-q3-c', text: 'Não concluo nem as tarefas básicas e estou acumulando pendências acadêmicas.',
+            result: { quadrant: 'W', title: 'Acúmulo de pendências', score: 1,
+              analysis: 'As pendências acadêmicas podem comprometer sua formação e futuras oportunidades.',
+              recommendation: 'Organize um plano de recuperação e busque apoio institucional para regularizar sua situação.' } },
+        ],
+      },
+      {
+        id: 'e-vf-q3',
+        text: 'Como você enxerga as transformações tecnológicas (ex: Inteligência Artificial) na sua futura área?',
+        choices: [
+          { id: 'e-vf-q3-a', text: 'Como aliadas: já aprendo a utilizar ferramentas tecnológicas a meu favor.',
+            result: { quadrant: 'S', title: 'Adaptação tecnológica', score: 3,
+              analysis: 'Você está se preparando ativamente para um mercado cada vez mais digital.',
+              recommendation: 'Continue explorando novas ferramentas e considere especializar-se em tecnologias estratégicas da sua área.' } },
+          { id: 'e-vf-q3-b', text: 'Sei que precisarei aprender a usar, mas ainda não comecei a praticar.',
+            result: { quadrant: 'O', title: 'Oportunidade de capacitação tecnológica', score: 2,
+              analysis: 'Você reconhece a importância da tecnologia, mas ainda não transformou esse reconhecimento em ação.',
+              recommendation: 'Comece com ferramentas básicas da sua área e dedique algumas horas semanais à prática.' } },
+          { id: 'e-vf-q3-c', text: 'Tenho receio de perder espaço e resisto a aprender novas tecnologias.',
+            result: { quadrant: 'T', title: 'Risco de obsolescência', score: 1,
+              analysis: 'A resistência à tecnologia pode tornar suas competências menos relevantes no mercado futuro.',
+              recommendation: 'Reconheça que a adaptação é inevitável e comece por ferramentas simples que tragam benefícios imediatos.' } },
+        ],
+      },
+      {
+        id: 'e-vf-q4',
+        text: 'Como está a sua rede de contatos (networking) acadêmica e profissional?',
+        choices: [
+          { id: 'e-vf-q4-a', text: 'Mantenho perfil ativo em redes profissionais (como LinkedIn) e converso com pessoas da área.',
+            result: { quadrant: 'S', title: 'Networking ativo', score: 3,
+              analysis: 'Você constrói uma rede que pode gerar oportunidades de estágio, emprego e aprendizado.',
+              recommendation: 'Mantenha relacionamentos genuínos e ofereça valor antes de pedir algo em troca.' } },
+          { id: 'e-vf-q4-b', text: 'Conheço apenas meus colegas de sala e os professores atuais.',
+            result: { quadrant: 'W', title: 'Rede profissional limitada', score: 2,
+              analysis: 'Sua rede é restrita ao ambiente acadêmico imediato, limitando oportunidades externas.',
+              recommendation: 'Participe de eventos, workshops e plataformas online para expandir seus contatos.' } },
+          { id: 'e-vf-q4-c', text: 'Não me relaciono com pessoas fora do meu círculo íntimo de amigos.',
+            result: { quadrant: 'W', title: 'Baixo networking', score: 1,
+              analysis: 'A ausência de rede profissional reduz significativamente suas oportunidades futuras.',
+              recommendation: 'Comece criando um perfil profissional e conectando-se com ex-alunos e profissionais da área.' } },
+        ],
+      },
+      {
+        id: 'e-vf-q5',
+        text: 'Se o mercado mudar e a sua área de interesse perder espaço, qual é o seu plano?',
+        choices: [
+          { id: 'e-vf-q5-a', text: 'Tenho facilidade para aprender coisas novas e me reorientar rapidamente.',
+            result: { quadrant: 'S', title: 'Adaptabilidade profissional', score: 3,
+              analysis: 'Você desenvolveu uma mentalidade de aprendizado contínuo que é essencial no mercado atual.',
+              recommendation: 'Cultive competências transferíveis (comunicação, análise, gestão) que funcionam em qualquer área.' } },
+          { id: 'e-vf-q5-b', text: 'Ficaria preocupado, mas tentaria fazer uma transição de área aos poucos.',
+            result: { quadrant: 'O', title: 'Capacidade de transição', score: 2,
+              analysis: 'Você reconhece a possibilidade de mudança e demonstra disposição para se adaptar, ainda que com receio.',
+              recommendation: 'Construa um plano B identificando áreas correlatas e competências que poderiam ser aproveitadas.' } },
+          { id: 'e-vf-q5-c', text: 'Entraria em desespero por não saber como me adaptar a mudanças.',
+            result: { quadrant: 'T', title: 'Vulnerabilidade às mudanças do mercado', score: 1,
+              analysis: 'A falta de preparação para cenários adversos pode gerar insegurança diante de transformações.',
+              recommendation: 'Desenvolva mentalidade ágil e mantenha-se aberto a aprender novas competências ao longo da vida.' } },
+        ],
+      },
+    ],
+  },
+
+  /* ==========================================================
+     EMPREENDEDOR
+     ========================================================== */
+  empreendedor: {
+
+    /* ---------- SAÚDE FINANCEIRA ---------- */
+    saudeFinanceira: [
+      {
+        id: 'em-sf-q1',
+        text: 'Como você administra a separação das contas da empresa e as suas contas pessoais?',
+        choices: [
+          { id: 'em-sf-q1-a', text: 'Totalmente separadas: tenho pró-labore definido e distribuição de lucros planejada.',
+            result: { quadrant: 'S', title: 'Separação financeira', score: 3,
+              analysis: 'Você mantém disciplina na gestão financeira, o que permite visão clara da saúde do negócio.',
+              recommendation: 'Documente formalmente as regras de pró-labore e distribuições para garantir sustentabilidade.' } },
+          { id: 'em-sf-q1-b', text: 'Eventualmente pago despesas pessoais com o caixa da empresa ou vice-versa.',
+            result: { quadrant: 'W', title: 'Mistura financeira ocasional', score: 2,
+              analysis: 'A mistura pontual compromete a precisão dos indicadores financeiros do negócio.',
+              recommendation: 'Defina um pró-labore fixo e evite usar o caixa da empresa para despesas pessoais.' } },
+          { id: 'em-sf-q1-c', text: 'Misturo tudo em uma única conta, sem qualquer controle de fluxo de caixa.',
+            result: { quadrant: 'W', title: 'Ausência de separação financeira', score: 1,
+              analysis: 'A falta de separação impede uma leitura real da saúde financeira da empresa.',
+              recommendation: 'Abra contas separadas imediatamente e comece a registrar todas as movimentações.' } },
+        ],
+      },
+      {
+        id: 'em-sf-q2',
+        text: 'Se as vendas do seu negócio caírem pela metade, por quanto tempo a empresa sobrevive?',
+        choices: [
+          { id: 'em-sf-q2-a', text: 'Por 6 meses ou mais, graças à reserva de emergência da empresa.',
+            result: { quadrant: 'S', title: 'Resiliência financeira', score: 3,
+              analysis: 'Sua empresa possui fôlego para atravessar períodos de queda sem comprometer a operação.',
+              recommendation: 'Continue fortalecendo a reserva e considere aplicá-la em investimentos de baixo risco.' } },
+          { id: 'em-sf-q2-b', text: 'Sobrevive por 1 a 2 meses no máximo.',
+            result: { quadrant: 'W', title: 'Baixa reserva de segurança', score: 2,
+              analysis: 'A empresa possui pouca margem para enfrentar cenários adversos prolongados.',
+              recommendation: 'Estabeleça meta de reserva equivalente a pelo menos 3 a 6 meses de custos fixos.' } },
+          { id: 'em-sf-q2-c', text: 'O negócio fecharia as portas no mesmo mês por falta de caixa.',
+            result: { quadrant: 'W', title: 'Vulnerabilidade de caixa', score: 1,
+              analysis: 'Qualquer queda abrupta de receita coloca a sobrevivência do negócio em risco imediato.',
+              recommendation: 'Priorize a formação de caixa e reduza custos fixos para ganhar fôlego financeiro.' } },
+        ],
+      },
+      {
+        id: 'em-sf-q3',
+        text: 'Como você calcula o preço de venda dos seus produtos ou serviços?',
+        choices: [
+          { id: 'em-sf-q3-a', text: 'Através de cálculo detalhado de custos fixos, variáveis, impostos e margem de lucro.',
+            result: { quadrant: 'S', title: 'Precificação estruturada', score: 3,
+              analysis: 'Sua precificação considera a estrutura real de custos, garantindo margem e sustentabilidade.',
+              recommendation: 'Revise periodicamente sua precificação conforme mudanças de custos e mercado.' } },
+          { id: 'em-sf-q3-b', text: 'Copio a média de preços cobrada pelos meus concorrentes diretos.',
+            result: { quadrant: 'W', title: 'Precificação pouco estratégica', score: 2,
+              analysis: 'Basear-se apenas em concorrentes pode ignorar suas particularidades de custo e valor.',
+              recommendation: 'Mapeie seus custos reais e combine essa análise com o posicionamento de mercado.' } },
+          { id: 'em-sf-q3-c', text: 'Defino um valor com base na intuição no momento da venda.',
+            result: { quadrant: 'W', title: 'Precificação intuitiva', score: 1,
+              analysis: 'A precificação sem método pode comprometer margens e a sustentabilidade do negócio.',
+              recommendation: 'Implemente uma planilha de formação de preço baseada em custos, impostos e margem desejada.' } },
+        ],
+      },
+      {
+        id: 'em-sf-q4',
+        text: 'Qual é a sua estratégia para gerenciar cobranças e clientes inadimplentes?',
+        choices: [
+          { id: 'em-sf-q4-a', text: 'Possuo processo automatizado com réguas de cobrança e análise prévia de crédito.',
+            result: { quadrant: 'S', title: 'Gestão de recebíveis', score: 3,
+              analysis: 'Você possui um sistema estruturado que reduz inadimplência e protege o fluxo de caixa.',
+              recommendation: 'Continue refinando critérios de análise de crédito e mantenha a automação atualizada.' } },
+          { id: 'em-sf-q4-b', text: 'Cobro manualmente apenas quando me lembro ou quando o caixa precisa de dinheiro.',
+            result: { quadrant: 'W', title: 'Cobrança reativa', score: 2,
+              analysis: 'A cobrança inconsistente aumenta o risco de inadimplência e impacta o caixa.',
+              recommendation: 'Implemente lembretes automáticos e defina prazos claros para follow-up de cobranças.' } },
+          { id: 'em-sf-q4-c', text: 'Tenho muitos pagamentos atrasados de clientes e nenhum controle de cobrança.',
+            result: { quadrant: 'W', title: 'Inadimplência sem controle', score: 1,
+              analysis: 'A ausência de gestão de recebíveis está comprometendo diretamente a saúde financeira.',
+              recommendation: 'Mapeie imediatamente todos os valores em atraso e estabeleça um processo formal de cobrança.' } },
+        ],
+      },
+      {
+        id: 'em-sf-q5',
+        text: 'Quanto do lucro gerado é reinvestido na modernização e crescimento do negócio?',
+        choices: [
+          { id: 'em-sf-q5-a', text: 'Reinvisto uma porcentagem fixa todos os meses em inovação e equipamentos.',
+            result: { quadrant: 'S', title: 'Reinvestimento estratégico', score: 3,
+              analysis: 'Você garante a evolução contínua do negócio por meio de aportes regulares.',
+              recommendation: 'Documente os investimentos e avalie o retorno de cada iniciativa para otimizar decisões futuras.' } },
+          { id: 'em-sf-q5-b', text: 'Reinvisto de forma esporádica, apenas quando sobra algum capital no fim do mês.',
+            result: { quadrant: 'W', title: 'Reinvestimento irregular', score: 2,
+              analysis: 'A inconsistência nos aportes dificulta planejamento de médio e longo prazo.',
+              recommendation: 'Defina uma porcentagem fixa do faturamento destinada a reinvestimento mensal.' } },
+          { id: 'em-sf-q5-c', text: 'Retiro todo o lucro para consumo pessoal, sem guardar nada na empresa.',
+            result: { quadrant: 'W', title: 'Baixa retenção de capital', score: 1,
+              analysis: 'A ausência de reinvestimento limita o crescimento e a modernização do negócio.',
+              recommendation: 'Separe imediatamente uma porcentagem do lucro para reinvestimento antes de qualquer retirada.' } },
+        ],
+      },
+    ],
+
+    /* ---------- AMBIENTE ORGANIZACIONAL ---------- */
+    ambienteOrganizacional: [
+      {
+        id: 'em-ao-q1',
+        text: 'Como é o clima de trabalho entre sócios, colaboradores ou parceiros do negócio?',
+        choices: [
+          { id: 'em-ao-q1-a', text: 'Transparente, colaborativo e focado no crescimento de todos.',
+            result: { quadrant: 'S', title: 'Cultura colaborativa', score: 3,
+              analysis: 'O ambiente favorece engajamento, retenção de talentos e alta performance coletiva.',
+              recommendation: 'Preserve essa cultura por meio de rituais de integração e reconhecimento contínuo.' } },
+          { id: 'em-ao-q1-b', text: 'Focado exclusivamente em metas, gerando momentos de forte tensão.',
+            result: { quadrant: 'W', title: 'Pressão excessiva por resultados', score: 2,
+              analysis: 'A cobrança intensa pode gerar desgaste e afetar a qualidade do trabalho a longo prazo.',
+              recommendation: 'Equilibre metas desafiadoras com cuidado genuíno pelo bem-estar da equipe.' } },
+          { id: 'em-ao-q1-c', text: 'Marcado por desconfiança, fofocas e alta rotatividade de pessoas (turnover).',
+            result: { quadrant: 'W', title: 'Ambiente organizacional tóxico', score: 1,
+              analysis: 'O clima atual prejudica a produtividade e eleva custos com recrutamento e treinamento.',
+              recommendation: 'Invista em comunicação transparente, feedback estruturado e ações de integração.' } },
+        ],
+      },
+      {
+        id: 'em-ao-q2',
+        text: 'A sua empresa consegue operar normalmente se você precisar se ausentar por 30 dias?',
+        choices: [
+          { id: 'em-ao-q2-a', text: 'Sim, os processos estão documentados e a equipe é totalmente autônoma.',
+            result: { quadrant: 'S', title: 'Autonomia operacional', score: 3,
+              analysis: 'O negócio possui maturidade operacional e não depende exclusivamente de você.',
+              recommendation: 'Continue delegando decisões estratégicas e desenvolva líderes internos.' } },
+          { id: 'em-ao-q2-b', text: 'Funciona com dificuldades e exige que eu responda mensagens todos os dias.',
+            result: { quadrant: 'W', title: 'Dependência do empreendedor', score: 2,
+              analysis: 'Sua presença ainda é necessária para decisões rotineiras, limitando escalabilidade.',
+              recommendation: 'Documente processos e delegue responsabilidades com autonomia progressiva.' } },
+          { id: 'em-ao-q2-c', text: 'Não; as atividades param completamente se eu não estiver presente.',
+            result: { quadrant: 'W', title: 'Centralização excessiva', score: 1,
+              analysis: 'O negócio está totalmente dependente de você, o que limita crescimento e gera risco.',
+              recommendation: 'Comece mapeando decisões que podem ser delegadas e forme uma equipe de confiança.' } },
+        ],
+      },
+      {
+        id: 'em-ao-q3',
+        text: 'O que acontece dentro do negócio quando um colaborador comete um erro operacional?',
+        choices: [
+          { id: 'em-ao-q3-a', text: 'Analisamos a causa do problema para ajustar os processos e treinar a equipe.',
+            result: { quadrant: 'S', title: 'Cultura de melhoria', score: 3,
+              analysis: 'O erro é tratado como oportunidade de aprendizado, fortalecendo processos e equipe.',
+              recommendation: 'Documente lições aprendidas e compartilhe com toda a equipe para multiplicar o aprendizado.' } },
+          { id: 'em-ao-q3-b', text: 'Resolvemos a falha pontual, mas há discussões para encontrar culpados.',
+            result: { quadrant: 'W', title: 'Cultura de culpabilização', score: 2,
+              analysis: 'A busca por culpados inibe a transparência e desvia o foco da melhoria do processo.',
+              recommendation: 'Substitua a lógica de culpa por análise de causa raiz e aprendizado coletivo.' } },
+          { id: 'em-ao-q3-c', text: 'Aplico punições duras e mantenho um ambiente baseado no medo de errar.',
+            result: { quadrant: 'W', title: 'Gestão baseada no medo', score: 1,
+              analysis: 'O medo inibe inovação, honestidade e retenção de talentos no negócio.',
+              recommendation: 'Reavalie sua abordagem e adote uma cultura de responsabilidade com segurança psicológica.' } },
+        ],
+      },
+      {
+        id: 'em-ao-q4',
+        text: 'A estrutura e as condições de trabalho oferecidas na empresa são adequadas?',
+        choices: [
+          { id: 'em-ao-q4-a', text: 'Totalmente adequadas às normas, com foco em ergonomia e bons equipamentos.',
+            result: { quadrant: 'S', title: 'Boas condições de trabalho', score: 3,
+              analysis: 'O ambiente físico contribui para produtividade, saúde e satisfação da equipe.',
+              recommendation: 'Mantenha revisões periódicas e consulte a equipe sobre melhorias pontuais.' } },
+          { id: 'em-ao-q4-b', text: 'Atendem ao básico, embora falte conforto ou manutenção em alguns pontos.',
+            result: { quadrant: 'W', title: 'Estrutura apenas funcional', score: 2,
+              analysis: 'O ambiente cumpre o mínimo, mas poderia ser mais confortável e produtivo.',
+              recommendation: 'Faça um diagnóstico com a equipe e priorize melhorias de maior impacto.' } },
+          { id: 'em-ao-q4-c', text: 'São precárias, oferecendo riscos à equipe ou gerando constante insatisfação.',
+            result: { quadrant: 'W', title: 'Condições inadequadas', score: 1,
+              analysis: 'As condições atuais podem gerar passivos trabalhistas e perda de talentos.',
+              recommendation: 'Priorize um plano de adequação estrutural, começando pelos pontos de maior risco.' } },
+        ],
+      },
+      {
+        id: 'em-ao-q5',
+        text: 'Como a empresa reconhece o bom desempenho e celebra as conquistas da equipe?',
+        choices: [
+          { id: 'em-ao-q5-a', text: 'Há programas formais de incentivo, elogios públicos e feedbacks estruturados.',
+            result: { quadrant: 'S', title: 'Reconhecimento estruturado', score: 3,
+              analysis: 'O reconhecimento sistemático fortalece engajamento e cultura de alta performance.',
+              recommendation: 'Continue variando formas de reconhecimento (financeiro, simbólico, de crescimento).' } },
+          { id: 'em-ao-q5-b', text: 'Celebramos apenas quando atingimos as metas anuais mais importantes.',
+            result: { quadrant: 'W', title: 'Reconhecimento pouco frequente', score: 2,
+              analysis: 'A raridade dos reconhecimentos pode desmotivar a equipe no dia a dia.',
+              recommendation: 'Implemente rituais menores de celebração (mensal ou por projeto concluído).' } },
+          { id: 'em-ao-q5-c', text: 'Não há reconhecimento; cumprir o trabalho é visto apenas como obrigação.',
+            result: { quadrant: 'W', title: 'Ausência de reconhecimento', score: 1,
+              analysis: 'A falta de reconhecimento reduz motivação, engajamento e retenção de talentos.',
+              recommendation: 'Comece com gestos simples de valorização e evolua para um programa estruturado.' } },
+        ],
+      },
+    ],
+
+    /* ---------- VISÃO DE FUTURO ---------- */
+    visaoFuturo: [
+      {
+        id: 'em-vf-q1',
+        text: 'Qual é o plano estratégico do seu negócio para os próximos 5 anos?',
+        choices: [
+          { id: 'em-vf-q1-a', text: 'Possuo plano de expansão estruturado, com metas de faturamento e participação de mercado.',
+            result: { quadrant: 'S', title: 'Planejamento estratégico', score: 3,
+              analysis: 'Você conduz o negócio com visão de longo prazo e direção clara.',
+              recommendation: 'Revise o plano trimestralmente e ajuste conforme mudanças de mercado.' } },
+          { id: 'em-vf-q1-b', text: 'Tenho o desejo de crescer, mas sem um plano detalhado passo a passo.',
+            result: { quadrant: 'W', title: 'Planejamento incompleto', score: 2,
+              analysis: 'A intenção de crescer existe, mas a ausência de plano pode gerar decisões reativas.',
+              recommendation: 'Construa um plano escrito com metas, prazos, responsáveis e indicadores.' } },
+          { id: 'em-vf-q1-c', text: 'Não faço planejamento; vivo focado em resolver os problemas do dia a dia.',
+            result: { quadrant: 'W', title: 'Gestão orientada ao curto prazo', score: 1,
+              analysis: 'O foco exclusivo no operacional impede o crescimento sustentável do negócio.',
+              recommendation: 'Reserve tempo semanal para reflexão estratégica e comece a definir metas de longo prazo.' } },
+        ],
+      },
+      {
+        id: 'em-vf-q2',
+        text: 'Como o seu negócio adota ferramentas de automação e Inteligência Artificial?',
+        choices: [
+          { id: 'em-vf-q2-a', text: 'Já utilizamos ferramentas digitais para otimizar tempo, atendimento e vendas.',
+            result: { quadrant: 'S', title: 'Adoção tecnológica', score: 3,
+              analysis: 'Sua empresa está na vanguarda da eficiência operacional por meio da tecnologia.',
+              recommendation: 'Continue explorando novas soluções e meça o ROI de cada ferramenta implementada.' } },
+          { id: 'em-vf-q2-b', text: 'Acompanho as novidades do mercado, mas demoro para implementar no negócio.',
+            result: { quadrant: 'O', title: 'Oportunidade de digitalização', score: 2,
+              analysis: 'Você reconhece o valor da tecnologia, mas a implementação lenta pode gerar perda de competitividade.',
+              recommendation: 'Escolha uma ferramenta de alto impacto e implemente em um projeto-piloto nos próximos 30 dias.' } },
+          { id: 'em-vf-q2-c', text: 'Prefiro métodos 100% tradicionais e evito mudanças tecnológicas.',
+            result: { quadrant: 'T', title: 'Risco tecnológico', score: 1,
+              analysis: 'A resistência à tecnologia pode tornar seu negócio obsoleto frente a concorrentes mais ágeis.',
+              recommendation: 'Reconheça que a transformação digital é inevitável e comece por soluções simples e acessíveis.' } },
+        ],
+      },
+      {
+        id: 'em-vf-q3',
+        text: 'Qual é o grau de concentração de faturamento da sua carteira de clientes/produtos?',
+        choices: [
+          { id: 'em-vf-q3-a', text: 'Tenho uma base diversificada de clientes e múltiplos produtos/serviços.',
+            result: { quadrant: 'S', title: 'Diversificação de receita', score: 3,
+              analysis: 'Sua empresa possui resiliência por não depender de poucos clientes ou produtos.',
+              recommendation: 'Continue expandindo a base e explore novos segmentos complementares.' } },
+          { id: 'em-vf-q3-b', text: 'Possuo poucos produtos principais e dependo bastante de 2 ou 3 clientes grandes.',
+            result: { quadrant: 'W', title: 'Concentração de receita', score: 2,
+              analysis: 'A dependência de poucos clientes representa risco estratégico relevante.',
+              recommendation: 'Desenvolva um plano ativo de prospecção para diversificar a carteira nos próximos 6 meses.' } },
+          { id: 'em-vf-q3-c', text: 'Dependo quase totalmente de um único cliente ou produto específico.',
+            result: { quadrant: 'T', title: 'Risco de concentração', score: 1,
+              analysis: 'A perda desse cliente ou produto colocaria a sobrevivência do negócio em risco imediato.',
+              recommendation: 'Priorize urgentemente a diversificação como estratégia de sobrevivência.' } },
+        ],
+      },
+      {
+        id: 'em-vf-q4',
+        text: 'Com que frequência você analisa as tendências e mudanças do seu setor de atuação?',
+        choices: [
+          { id: 'em-vf-q4-a', text: 'Pesquiso concorrentes, inovações e tendências de mercado frequentemente.',
+            result: { quadrant: 'S', title: 'Inteligência de mercado', score: 3,
+              analysis: 'Você mantém-se atualizado e antecipa movimentos do setor.',
+              recommendation: 'Transforme insights em ações concretas e compartilhe com sua equipe estratégica.' } },
+          { id: 'em-vf-q4-b', text: 'Analiso o mercado apenas quando percebo uma queda nas vendas.',
+            result: { quadrant: 'W', title: 'Monitoramento reativo', score: 2,
+              analysis: 'A análise tardia do mercado pode fazer você perder janelas de oportunidade.',
+              recommendation: 'Estabeleça uma rotina mensal de análise de mercado, independentemente dos resultados.' } },
+          { id: 'em-vf-q4-c', text: 'Acredito que meu produto/serviço nunca perderá a demanda do público.',
+            result: { quadrant: 'T', title: 'Risco de complacência', score: 1,
+              analysis: 'A supervalorização da própria oferta pode levar à obsolescência diante de mudanças de mercado.',
+              recommendation: 'Adote postura humilde e investigue constantemente as necessidades reais dos seus clientes.' } },
+        ],
+      },
+      {
+        id: 'em-vf-q5',
+        text: 'Você prepara sua empresa para ser um ativo escalável e negociável no futuro?',
+        choices: [
+          { id: 'em-vf-q5-a', text: 'Sim, construo a empresa com processos claros para que ela valha mercado.',
+            result: { quadrant: 'S', title: 'Construção de valor empresarial', score: 3,
+              analysis: 'Você trata o negócio como um ativo de longo prazo, não apenas como fonte de renda.',
+              recommendation: 'Continue profissionalizando a gestão e considere uma avaliação periódica de valor.' } },
+          { id: 'em-vf-q5-b', text: 'Quero apenas mantê-la funcionando como minha fonte de renda pessoal.',
+            result: { quadrant: 'W', title: 'Baixa escalabilidade', score: 2,
+              analysis: 'O negócio está centrado na sua renda, o que limita seu potencial de crescimento.',
+              recommendation: 'Pense no negócio como um ativo independente e comece a profissionalizar estruturas.' } },
+          { id: 'em-vf-q5-c', text: 'Nunca pensei no destino do negócio caso decida parar de trabalhar.',
+            result: { quadrant: 'W', title: 'Ausência de planejamento sucessório', score: 1,
+              analysis: 'A falta de visão de futuro pode comprometer a continuidade do negócio.',
+              recommendation: 'Comece refletindo sobre o legado que deseja construir e desenhe um plano de transição.' } },
+        ],
+      },
+    ],
+  },
+
+  /* ==========================================================
+     EMPREGADO
+     ========================================================== */
+  empregado: {
+
+    /* ---------- SAÚDE FINANCEIRA ---------- */
+    saudeFinanceira: [
+      {
+        id: 'ep-sf-q1',
+        text: 'Qual é a primeira atitude que você toma assim que recebe seu salário?',
+        choices: [
+          { id: 'ep-sf-q1-a', text: 'Separo uma parte para investimentos/reserva de emergência e pago as contas.',
+            result: { quadrant: 'S', title: 'Prioridade financeira', score: 3,
+              analysis: 'Você aplica a lógica do "pague-se primeiro", garantindo construção patrimonial antes do consumo.',
+              recommendation: 'Automatize esse processo e aumente gradualmente o percentual destinado a investimentos.' } },
+          { id: 'ep-sf-q1-b', text: 'Pago todas as contas do mês e guardo apenas o que sobrar no final.',
+            result: { quadrant: 'W', title: 'Poupança residual', score: 2,
+              analysis: 'Guardar o que sobra geralmente resulta em pouca ou nenhuma economia ao final do mês.',
+              recommendation: 'Inverta a lógica: defina um valor fixo para poupar antes de pagar as demais contas.' } },
+          { id: 'ep-sf-q1-c', text: 'Gasto sem planejamento e recorro ao cartão de crédito ou limite para fechar o mês.',
+            result: { quadrant: 'W', title: 'Dependência de crédito', score: 1,
+              analysis: 'O uso recorrente de crédito para fechar o mês indica desequilíbrio entre renda e despesas.',
+              recommendation: 'Mapeie todas as despesas e estabeleça um teto de gastos compatível com sua renda.' } },
+        ],
+      },
+      {
+        id: 'ep-sf-q2',
+        text: 'Se você fosse desligado da empresa hoje, por quanto tempo suas economias te manteriam?',
+        choices: [
+          { id: 'ep-sf-q2-a', text: 'Por 6 meses ou mais, mantendo o padrão de vida atual.',
+            result: { quadrant: 'S', title: 'Reserva de segurança', score: 3,
+              analysis: 'Você possui fôlego financeiro para enfrentar transições sem desespero.',
+              recommendation: 'Mantenha a reserva atualizada e considere diversificar aplicações.' } },
+          { id: 'ep-sf-q2-b', text: 'De 1 a 3 meses no máximo.',
+            result: { quadrant: 'W', title: 'Reserva limitada', score: 2,
+              analysis: 'Sua reserva cobre um período curto, o que pode gerar pressão em caso de imprevistos.',
+              recommendation: 'Estabeleça meta de 6 meses de despesas essenciais como reserva de segurança.' } },
+          { id: 'ep-sf-q2-c', text: 'Menos de 1 mês; dependo exclusivamente do próximo pagamento.',
+            result: { quadrant: 'W', title: 'Alta dependência salarial', score: 1,
+              analysis: 'Qualquer interrupção de renda gera risco financeiro imediato.',
+              recommendation: 'Priorize urgentemente a formação de uma reserva, mesmo que com valores pequenos.' } },
+        ],
+      },
+      {
+        id: 'ep-sf-q3',
+        text: 'Você possui alguma outra fonte de renda além do seu emprego atual?',
+        choices: [
+          { id: 'ep-sf-q3-a', text: 'Sim, tenho rendimentos de investimentos, trabalhos autônomos ou projetos paralelos.',
+            result: { quadrant: 'S', title: 'Diversificação de renda', score: 3,
+              analysis: 'Você reduz a dependência de uma única fonte e aumenta sua segurança financeira.',
+              recommendation: 'Continue expandindo fontes passivas e avalie quais têm maior potencial de escala.' } },
+          { id: 'ep-sf-q3-b', text: 'Não tenho, mas estou estudando formas de gerar renda extra.',
+            result: { quadrant: 'O', title: 'Oportunidade de renda complementar', score: 2,
+              analysis: 'Você reconhece a importância de diversificar e está em fase de preparação.',
+              recommendation: 'Defina um projeto concreto e comece a testá-lo nos próximos 30 dias.' } },
+          { id: 'ep-sf-q3-c', text: 'Não, dependendo 100% de uma única fonte de receita.',
+            result: { quadrant: 'T', title: 'Dependência de uma única renda', score: 1,
+              analysis: 'Qualquer perda do emprego atual gera impacto financeiro imediato e severo.',
+              recommendation: 'Comece mapeando habilidades que podem gerar renda complementar e teste pequenas iniciativas.' } },
+        ],
+      },
+      {
+        id: 'ep-sf-q4',
+        text: 'Qual é a sua situação atual em relação a parcelamentos, empréstimos e cartão de crédito?',
+        choices: [
+          { id: 'ep-sf-q4-a', text: 'Não possuo dívidas acumuladas ou tenho apenas financiamentos planejados.',
+            result: { quadrant: 'S', title: 'Endividamento controlado', score: 3,
+              analysis: 'Você mantém uma relação saudável com crédito, usando-o de forma estratégica.',
+              recommendation: 'Continue monitorando compromissos e evite assumir novas dívidas sem planejamento.' } },
+          { id: 'ep-sf-q4-b', text: 'Pago parcelas mensais que comprometem uma parte considerável do meu salário.',
+            result: { quadrant: 'W', title: 'Comprometimento de renda', score: 2,
+              analysis: 'Parcelas elevadas limitam sua capacidade de poupar e investir.',
+              recommendation: 'Revise todos os compromissos e considere renegociar ou quitar os de maior custo.' } },
+          { id: 'ep-sf-q4-c', text: 'Tenho dívidas em atraso e juros acumulando.',
+            result: { quadrant: 'T', title: 'Risco de endividamento', score: 1,
+              analysis: 'Dívidas em atraso geram juros compostos que podem comprometer sua saúde financeira por anos.',
+              recommendation: 'Procure imediatamente programas de renegociação e estabeleça um plano realista de quitação.' } },
+        ],
+      },
+      {
+        id: 'ep-sf-q5',
+        text: 'Você possui objetivos financeiros claros calculados para os próximos anos?',
+        choices: [
+          { id: 'ep-sf-q5-a', text: 'Sim (ex: comprar imóvel, viagem, reserva), com plano contínuo de aportes.',
+            result: { quadrant: 'S', title: 'Metas financeiras claras', score: 3,
+              analysis: 'Você possui objetivos tangíveis e está executando um plano para alcançá-los.',
+              recommendation: 'Revise metas anualmente e ajuste aportes conforme mudanças de renda ou prioridades.' } },
+          { id: 'ep-sf-q5-b', text: 'Tenho desejos informais, mas não calculo quanto preciso guardar por mês.',
+            result: { quadrant: 'W', title: 'Metas sem planejamento', score: 2,
+              analysis: 'Desejos sem cálculo dificultam a transformação em realidade.',
+              recommendation: 'Transforme cada desejo em meta com valor, prazo e aporte mensal definido.' } },
+          { id: 'ep-sf-q5-c', text: 'Não consigo planejar nada além de pagar as despesas do mês corrente.',
+            result: { quadrant: 'W', title: 'Foco exclusivo no presente', score: 1,
+              analysis: 'A ausência de planejamento de longo prazo limita sua construção patrimonial.',
+              recommendation: 'Comece definindo um objetivo simples de médio prazo e calcule o aporte mensal necessário.' } },
+        ],
+      },
+    ],
+
+    /* ---------- AMBIENTE ORGANIZACIONAL ---------- */
+    ambienteOrganizacional: [
+      {
+        id: 'ep-ao-q1',
+        text: 'Como você descreve a atmosfera diária do seu local de trabalho?',
+        choices: [
+          { id: 'ep-ao-q1-a', text: 'Saudável, respeitosa, colaborativa e motivadora.',
+            result: { quadrant: 'S', title: 'Ambiente saudável', score: 3,
+              analysis: 'Você trabalha em um ambiente que favorece bem-estar, produtividade e crescimento.',
+              recommendation: 'Valorize esse ambiente e contribua ativamente para manter essa cultura positiva.' } },
+          { id: 'ep-ao-q1-b', text: 'Burocrática e neutra; cumpre-se a rotina sem grandes entusiasmos.',
+            result: { quadrant: 'W', title: 'Ambiente pouco estimulante', score: 2,
+              analysis: 'O ambiente é funcional, mas não gera engajamento ou motivação adicional.',
+              recommendation: 'Busque projetos internos desafiadores ou grupos de trabalho que tragam mais significado.' } },
+          { id: 'ep-ao-q1-c', text: 'Tóxica, com constante pressão abusiva, intrigas e favoritismos.',
+            result: { quadrant: 'W', title: 'Ambiente tóxico', score: 1,
+              analysis: 'O ambiente atual está impactando negativamente sua saúde mental e desempenho.',
+              recommendation: 'Avalie seriamente uma transição profissional e proteja sua saúde como prioridade.' } },
+        ],
+      },
+      {
+        id: 'ep-ao-q2',
+        text: 'Sua liderança imediata demonstra abertura para ouvir suas opiniões e sugestões?',
+        choices: [
+          { id: 'ep-ao-q2-a', text: 'Sim, tenho espaço para opinar e minhas ideias frequentemente são aplicadas.',
+            result: { quadrant: 'S', title: 'Liderança aberta', score: 3,
+              analysis: 'Você possui uma liderança que valoriza contribuições e promove participação.',
+              recommendation: 'Continue trazendo ideias e considere assumir papéis de maior influência estratégica.' } },
+          { id: 'ep-ao-q2-b', text: 'A gestão ouve as sugestões, mas dificilmente muda a forma tradicional de trabalhar.',
+            result: { quadrant: 'W', title: 'Baixa abertura à mudança', score: 2,
+              analysis: 'Existe escuta formal, mas pouca disposição para implementar mudanças reais.',
+              recommendation: 'Apresente propostas com dados e projeções de impacto para aumentar a persuasão.' } },
+          { id: 'ep-ao-q2-c', text: 'Não há diálogo; questionamentos ou novas ideias são reprimidos.',
+            result: { quadrant: 'W', title: 'Baixa abertura ao diálogo', score: 1,
+              analysis: 'A liderança autoritária inibe inovação e pode gerar desgaste profissional.',
+              recommendation: 'Documente suas ideias e avalie se esse ambiente é compatível com seu crescimento.' } },
+        ],
+      },
+      {
+        id: 'ep-ao-q3',
+        text: 'Como o seu trabalho atual afeta sua saúde física e mental?',
+        choices: [
+          { id: 'ep-ao-q3-a', text: 'Mantenho um ótimo equilíbrio entre a vida pessoal e a profissional.',
+            result: { quadrant: 'S', title: 'Equilíbrio entre vida e trabalho', score: 3,
+              analysis: 'Você conseguiu estabelecer limites saudáveis que preservam sua qualidade de vida.',
+              recommendation: 'Proteja esse equilíbrio e compartilhe boas práticas com colegas que possam se beneficiar.' } },
+          { id: 'ep-ao-q3-b', text: 'Sinto estresse ou cansaço esporádico, mas dentro do suportável.',
+            result: { quadrant: 'W', title: 'Estresse ocasional', score: 2,
+              analysis: 'Períodos de maior carga geram desgaste pontual, mas ainda administrável.',
+              recommendation: 'Identifique gatilhos de estresse e desenvolva rotinas de recuperação consistentes.' } },
+          { id: 'ep-ao-q3-c', text: 'Sofro de ansiedade, insônia ou exaustão extrema devido ao trabalho.',
+            result: { quadrant: 'W', title: 'Sobrecarga profissional', score: 1,
+              analysis: 'O trabalho está comprometendo seriamente sua saúde e qualidade de vida.',
+              recommendation: 'Busque apoio profissional e avalie mudanças estruturais na sua relação com o trabalho.' } },
+        ],
+      },
+      {
+        id: 'ep-ao-q4',
+        text: 'Suas responsabilidades e metas diárias são claramente definidas pela empresa?',
+        choices: [
+          { id: 'ep-ao-q4-a', text: 'Sei exatamente o que é esperado do meu desempenho e das minhas entregas.',
+            result: { quadrant: 'S', title: 'Clareza de responsabilidades', score: 3,
+              analysis: 'Você possui direção clara, o que favorece foco, produtividade e avaliação justa.',
+              recommendation: 'Use essa clareza para negociar objetivos desafiadores e planos de crescimento.' } },
+          { id: 'ep-ao-q4-b', text: 'Às vezes assumo tarefas fora da minha função por falta de organização do setor.',
+            result: { quadrant: 'W', title: 'Desorganização funcional', score: 2,
+              analysis: 'A falta de definição clara pode gerar sobrecarga e diluição de responsabilidades.',
+              recommendation: 'Documente suas entregas reais e alinhe com sua liderança o escopo esperado.' } },
+          { id: 'ep-ao-q4-c', text: 'Há desorganização frequente e cobranças por tarefas que nunca foram combinadas.',
+            result: { quadrant: 'W', title: 'Falta de clareza operacional', score: 1,
+              analysis: 'A ausência de definição gera estresse, injustiças e dificuldade de avaliação.',
+              recommendation: 'Sugira formalização de descrições de cargo e metas por escrito.' } },
+        ],
+      },
+      {
+        id: 'ep-ao-q5',
+        text: 'O reconhecimento profissional e as promoções na empresa ocorrem com base no mérito?',
+        choices: [
+          { id: 'ep-ao-q5-a', text: 'Sim, existem critérios claros e transparentes de avaliação de desempenho.',
+            result: { quadrant: 'S', title: 'Meritocracia transparente', score: 3,
+              analysis: 'Você está em um ambiente que valoriza resultados e oferece caminhos claros de crescimento.',
+              recommendation: 'Continue entregando resultados mensuráveis e documente suas conquistas.' } },
+          { id: 'ep-ao-q5-b', text: 'Parcialmente; favoritismos pontuais influenciam nas escolhas.',
+            result: { quadrant: 'W', title: 'Percepção de favoritismo', score: 2,
+              analysis: 'A existência de favoritismos pontuais pode desmotivar e gerar insegurança sobre critérios.',
+              recommendation: 'Busque feedbacks formais sobre seu desempenho e alinhe expectativas com sua liderança.' } },
+          { id: 'ep-ao-q5-c', text: 'Não, promoções acontecem apenas por apadrinhamento ou alianças políticas.',
+            result: { quadrant: 'T', title: 'Risco de estagnação por favoritismo', score: 1,
+              analysis: 'Um ambiente baseado em alianças políticas limita seu crescimento por mérito.',
+              recommendation: 'Avalie se esse ambiente é compatível com seus valores e considere oportunidades externas.' } },
+        ],
+      },
+    ],
+
+    /* ---------- VISÃO DE FUTURO ---------- */
+    visaoFuturo: [
+      {
+        id: 'ep-vf-q1',
+        text: 'Onde você se enxerga profissionalmente dentro da empresa atual nos próximos 5 anos?',
+        choices: [
+          { id: 'ep-vf-q1-a', text: 'Promovido a um cargo de liderança ou a um nível especialista superior.',
+            result: { quadrant: 'S', title: 'Perspectiva de crescimento', score: 3,
+              analysis: 'Você possui visão clara de progressão e está se preparando para alcançá-la.',
+              recommendation: 'Construa um plano de desenvolvimento alinhado com as competências do próximo nível.' } },
+          { id: 'ep-vf-q1-b', text: 'No mesmo cargo ou realizando movimentações laterais de função.',
+            result: { quadrant: 'W', title: 'Baixa perspectiva de crescimento', score: 2,
+              analysis: 'Você não enxerga progressão vertical, o que pode gerar estagnação a médio prazo.',
+              recommendation: 'Converse com sua liderança sobre possibilidades de crescimento e desenvolva competências-chave.' } },
+          { id: 'ep-vf-q1-c', text: 'Estagnado ou fora da empresa por falta de perspectivas de crescimento.',
+            result: { quadrant: 'T', title: 'Risco de estagnação profissional', score: 1,
+              analysis: 'A ausência de perspectivas pode levar à desmotivação ou saída involuntária.',
+              recommendation: 'Avalie seriamente o mercado e comece a se posicionar para novas oportunidades.' } },
+        ],
+      },
+      {
+        id: 'ep-vf-q2',
+        text: 'O que você tem feito para manter sua qualificação e empregabilidade atualizadas?',
+        choices: [
+          { id: 'ep-vf-q2-a', text: 'Faço cursos de especialização, certificações e mantenho contato ativo com o mercado.',
+            result: { quadrant: 'S', title: 'Empregabilidade ativa', score: 3,
+              analysis: 'Você investe continuamente no seu capital profissional, aumentando suas opções.',
+              recommendation: 'Continue diversificando competências e construa uma rede sólida no seu setor.' } },
+          { id: 'ep-vf-q2-b', text: 'Participo apenas dos treinamentos obrigatórios oferecidos pela própria empresa.',
+            result: { quadrant: 'W', title: 'Atualização limitada', score: 2,
+              analysis: 'Depender apenas da empresa para sua formação limita seu diferencial competitivo.',
+              recommendation: 'Invista em iniciativas próprias de aprendizado alinhadas ao seu plano de carreira.' } },
+          { id: 'ep-vf-q2-c', text: 'Não estudo ou me atualizo há anos, confiando apenas na experiência antiga.',
+            result: { quadrant: 'T', title: 'Obsolescência profissional', score: 1,
+              analysis: 'A falta de atualização reduz progressivamente sua competitividade no mercado.',
+              recommendation: 'Comece imediatamente um plano de requalificação com foco nas demandas atuais do seu setor.' } },
+        ],
+      },
+      {
+        id: 'ep-vf-q3',
+        text: 'Se a sua função atual fosse automatizada por novas tecnologias, como você reagiria?',
+        choices: [
+          { id: 'ep-vf-q3-a', text: 'Já desenvolvo competências estratégicas e interpessoais difíceis de automatizar.',
+            result: { quadrant: 'S', title: 'Preparação para automação', score: 3,
+              analysis: 'Você está construindo competências que permanecem relevantes mesmo em cenários de automação.',
+              recommendation: 'Continue investindo em habilidades humanas e em tecnologias complementares à sua área.' } },
+          { id: 'ep-vf-q3-b', text: 'Ficaria preocupado, mas procuraria novos cursos de última hora.',
+            result: { quadrant: 'O', title: 'Oportunidade de requalificação', score: 2,
+              analysis: 'Você reconhece o risco e demonstra disposição para se adaptar, ainda que tardiamente.',
+              recommendation: 'Não espere a ameaça se concretizar — comece sua requalificação agora.' } },
+          { id: 'ep-vf-q3-c', text: 'Não saberia o que fazer e ficaria sem alternativas profissionais.',
+            result: { quadrant: 'T', title: 'Vulnerabilidade à automação', score: 1,
+              analysis: 'Sua função atual pode estar em risco e você não possui plano de transição.',
+              recommendation: 'Mapeie competências transferíveis e explore áreas correlatas imediatamente.' } },
+        ],
+      },
+      {
+        id: 'ep-vf-q4',
+        text: 'Se precisasse buscar uma nova oportunidade no mercado amanhã, quão preparado estaria?',
+        choices: [
+          { id: 'ep-vf-q4-a', text: 'Meu currículo e perfil profissional estão atualizados e minha rede de contatos está ativa.',
+            result: { quadrant: 'S', title: 'Prontidão profissional', score: 3,
+              analysis: 'Você mantém sua apresentação profissional em dia, o que reduz riscos em transições.',
+              recommendation: 'Continue nutrindo sua rede mesmo quando não está buscando ativamente novas oportunidades.' } },
+          { id: 'ep-vf-q4-b', text: 'Precisaria de semanas para reorganizar minha apresentação profissional.',
+            result: { quadrant: 'W', title: 'Preparação insuficiente', score: 2,
+              analysis: 'Sua apresentação profissional precisa de atualização para refletir suas conquistas recentes.',
+              recommendation: 'Reserve um fim de semana para atualizar currículo, LinkedIn e portfólio.' } },
+          { id: 'ep-vf-q4-c', text: 'Estou completamente desatualizado quanto às exigências do mercado.',
+            result: { quadrant: 'T', title: 'Baixa empregabilidade', score: 1,
+              analysis: 'Sua apresentação profissional não reflete as demandas atuais do mercado.',
+              recommendation: 'Procure orientação profissional e invista em uma reconstrução completa do seu posicionamento.' } },
+        ],
+      },
+      {
+        id: 'ep-vf-q5',
+        text: 'O seu trabalho atual está alinhado aos seus objetivos pessoais de vida?',
+        choices: [
+          { id: 'ep-vf-q5-a', text: 'Sim, está conectado com meus valores e com meu plano de longo prazo.',
+            result: { quadrant: 'S', title: 'Alinhamento de carreira', score: 3,
+              analysis: 'Você encontra propósito no trabalho atual, o que favorece engajamento e performance.',
+              recommendation: 'Continue alinhando entregas diárias com seus objetivos maiores e compartilhe essa visão.' } },
+          { id: 'ep-vf-q5-b', text: 'Serve temporariamente como fonte de renda para pagar as contas.',
+            result: { quadrant: 'W', title: 'Baixo alinhamento profissional', score: 2,
+              analysis: 'O trabalho cumpre função financeira, mas não está conectado com seus propósitos.',
+              recommendation: 'Use esse período para planejar uma transição gradual rumo a algo mais alinhado.' } },
+          { id: 'ep-vf-q5-c', text: 'Sinto que estou desperdiçando meu tempo e meu potencial profissional.',
+            result: { quadrant: 'W', title: 'Desalinhamento profissional', score: 1,
+              analysis: 'A percepção de desperdício pode gerar desmotivação crônica e afetar sua saúde mental.',
+              recommendation: 'Comece a desenhar um plano de transição realista para uma trajetória mais significativa.' } },
+        ],
+      },
+    ],
+  },
+};
+
+/* ============================================================
+   METADADOS DOS QUADRANTES SWOT
+   ============================================================ */
+const SWOT_META = {
+  S: { key: 'S', title: 'Forças',        label: 'Interno · Positivo',  intro: 'Aspectos internos positivos que favorecem você e podem ser alavancados.' },
+  W: { key: 'W', title: 'Fraquezas',     label: 'Interno · Negativo',  intro: 'Aspectos internos que merecem atenção e desenvolvimento.' },
+  O: { key: 'O', title: 'Oportunidades', label: 'Externo · Positivo',  intro: 'Fatores externos positivos que podem ser aproveitados com estratégia.' },
+  T: { key: 'T', title: 'Ameaças',       label: 'Externo · Negativo',  intro: 'Fatores externos que representam riscos e precisam ser monitorados.' },
+};
+
+/* ============================================================
+   ESTADO DA APLICAÇÃO
+   ============================================================ */
+const state = {
+  history: ['home'],
+  profile: null,       // id do perfil selecionado
+  topic: null,         // id do tema selecionado
+  questions: [],       // array de 5 perguntas ativas
+  currentQuestion: 0,
+  answers: [],         // array de objetos completos com { questionId, choiceId, text, result }
+  swotResult: null,    // { S: { score, percent, items: [...] }, ... }
+};
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+function navigateTo(screenName, { pushHistory = true } = {}) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('is-active'));
+  const target = document.querySelector(`[data-screen="${screenName}"]`);
+  if (!target) return;
+  target.classList.add('is-active');
+
+  if (pushHistory && state.history[state.history.length - 1] !== screenName) {
+    state.history.push(screenName);
+  }
+
+  updateTopbarState(screenName);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (screenName === 'home')     renderHomeOptions();
+  if (screenName === 'choice2')  renderChoice2();
+  if (screenName === 'quiz')     renderQuestion();
+  if (screenName === 'result')   renderSWOT();
+}
+
+function goBack() {
+  if (state.history.length <= 1) return;
+  state.history.pop();
+  const previous = state.history[state.history.length - 1];
+  navigateTo(previous, { pushHistory: false });
+}
+
+function restart() {
+  state.history = ['home'];
+  state.profile = null;
+  state.topic = null;
+  state.questions = [];
+  state.currentQuestion = 0;
+  state.answers = [];
+  state.swotResult = null;
+  navigateTo('home', { pushHistory: false });
+}
+
+function updateTopbarState(screenName) {
+  const btnBack = document.getElementById('btn-back');
+  btnBack.disabled = state.history.length <= 1 || screenName === 'home';
+}
+
+/* ============================================================
+   RENDER — HOME (perfis)
+   ============================================================ */
+function renderHomeOptions() {
+  const container = document.getElementById('options-home');
+  container.innerHTML = '';
+  Object.values(PROFILES).forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'option-card';
+    btn.type = 'button';
+    btn.setAttribute('role', 'listitem');
+    btn.innerHTML = `
+      <div>
+        <div class="option-index">${p.index}</div>
+        <div class="option-title">${p.title}</div>
+        <div class="option-desc">${p.desc}</div>
+      </div>
+      <div class="option-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>`;
+    btn.addEventListener('click', () => {
+      state.profile = p.id;
+      navigateTo('choice2');
+    });
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      btn.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      btn.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+    container.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   RENDER — CHOICE 2 (temas)
+   ============================================================ */
+function renderChoice2() {
+  const profile = PROFILES[state.profile];
+  const ctx = document.getElementById('choice2-context');
+  ctx.textContent = `Perfil: ${profile ? profile.title : '—'}`;
+
+  const container = document.getElementById('options-choice2');
+  container.innerHTML = '';
+  Object.values(TOPICS).forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'option-card';
+    btn.type = 'button';
+    btn.setAttribute('role', 'listitem');
+    btn.innerHTML = `
+      <div>
+        <div class="option-index">${t.index}</div>
+        <div class="option-title">${t.title}</div>
+        <div class="option-desc">${t.desc}</div>
+      </div>
+      <div class="option-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>`;
+    btn.addEventListener('click', () => {
+      state.topic = t.id;
+      state.questions = QUIZ_DATA[state.profile][state.topic];
+      state.currentQuestion = 0;
+      state.answers = [];
+      navigateTo('quiz');
+    });
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      btn.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      btn.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+    container.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   RENDER — QUIZ
+   ============================================================ */
+function renderQuestion() {
+  const q = state.questions[state.currentQuestion];
+  const total = state.questions.length;
+  const current = state.currentQuestion + 1;
+  const currentAnswer = state.answers[state.currentQuestion] || null;
+
+  // Context chips
+  const ctx = document.getElementById('quiz-context');
+  const profile = PROFILES[state.profile];
+  const topic = TOPICS[state.topic];
+  ctx.innerHTML = `
+    <span class="quiz-context-chip">Perfil: <strong>${profile.title}</strong></span>
+    <span class="quiz-context-chip">Tema: <strong>${topic.title}</strong></span>
+  `;
+
+  document.getElementById('q-current').textContent = current;
+  document.getElementById('q-total').textContent = total;
+  document.getElementById('q-label').textContent = `Pergunta ${String(current).padStart(2, '0')}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const percent = Math.round(((current - 1) / total) * 100);
+  document.getElementById('q-percent').textContent = `${percent}%`;
+  document.getElementById('progress-fill').style.width = `${percent}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  q.choices.forEach((c, i) => {
+    const isSelected = currentAnswer && currentAnswer.choiceId === c.id;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice' + (isSelected ? ' is-selected' : '');
+    btn.setAttribute('role', 'radio');
+    btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+    btn.setAttribute('data-id', c.id);
+    btn.innerHTML = `
+      <div class="choice-indicator" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <span class="choice-letter">${letters[i]}</span>
+      <span class="choice-text">${c.text}</span>`;
+    btn.addEventListener('click', () => selectChoice(c));
+    choicesEl.appendChild(btn);
+  });
+
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  btnPrev.disabled = state.currentQuestion === 0;
+
+  const isLast = state.currentQuestion === total - 1;
+  btnNext.innerHTML = isLast
+    ? `Ver resultado <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`
+    : `Próxima <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+  btnNext.disabled = !currentAnswer;
+
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
+}
+
+function selectChoice(choice) {
+  const q = state.questions[state.currentQuestion];
+  state.answers[state.currentQuestion] = {
+    questionId: q.id,
+    questionText: q.text,
+    choiceId: choice.id,
+    text: choice.text,
+    result: { ...choice.result },
+  };
+
+  document.querySelectorAll('.choice').forEach(btn => {
+    const isSelected = btn.getAttribute('data-id') === choice.id;
+    btn.classList.toggle('is-selected', isSelected);
+    btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+  });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQuestion() {
+  if (!state.answers[state.currentQuestion]) return;
+  if (state.currentQuestion < state.questions.length - 1) {
+    state.currentQuestion++;
+    renderQuestion();
+  } else {
+    state.swotResult = calculateSWOT();
+    navigateTo('result');
+  }
+}
+
+function prevQuestion() {
+  if (state.currentQuestion > 0) {
+    state.currentQuestion--;
+    renderQuestion();
+  }
+}
+
+/* ============================================================
+   CÁLCULO DA SWOT
+   Agrupa diagnósticos por quadrante, soma scores, calcula %
+   ============================================================ */
+function calculateSWOT() {
+  const grouped = { S: [], W: [], O: [], T: [] };
+
+  state.answers.forEach(a => {
+    const q = a.result.quadrant;
+    if (grouped[q]) grouped[q].push(a);
+  });
+
+  const totals = {};
+  let totalScore = 0;
+  Object.keys(grouped).forEach(k => {
+    const score = grouped[k].reduce((acc, item) => acc + (item.result.score || 0), 0);
+    totals[k] = score;
+    totalScore += score;
+  });
+
+  const result = {};
+  Object.keys(grouped).forEach(k => {
+    const score = totals[k];
+    const percent = totalScore > 0 ? Math.round((score / totalScore) * 100) : 0;
+    result[k] = {
+      score,
+      percent,
+      items: grouped[k],
+    };
+  });
+
+  return result;
+}
+
+/* ============================================================
+   RENDER — MATRIZ SWOT
+   ============================================================ */
+function renderSWOT() {
+  const matrix = document.getElementById('swot-matrix');
+  matrix.innerHTML = '';
+
+  // Contexto do resultado
+  const resultCtx = document.getElementById('result-context');
+  const profile = PROFILES[state.profile];
+  const topic = TOPICS[state.topic];
+  resultCtx.innerHTML = `
+    <span class="quiz-context-chip">Perfil: <strong>${profile.title}</strong></span>
+    <span class="quiz-context-chip">Tema: <strong>${topic.title}</strong></span>
+  `;
+
+  const order = ['S', 'W', 'O', 'T'];
+  order.forEach(key => {
+    const meta = SWOT_META[key];
+    const data = state.swotResult[key];
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    cell.className = 'swot-cell';
+    cell.setAttribute('data-quadrant', key);
+    cell.setAttribute('role', 'listitem');
+    cell.setAttribute('aria-label', `${meta.title} — ${data.score} pontos, ${data.percent}%. Clique para ver análise detalhada.`);
+
+    const tags = data.items.map(it => `<span class="swot-tag">${it.result.title}</span>`).join('');
+    const summary = data.items.length > 0
+      ? `${data.items.length} diagnóstico${data.items.length > 1 ? 's' : ''} identificado${data.items.length > 1 ? 's' : ''} neste quadrante.`
+      : 'Nenhum diagnóstico foi identificado neste quadrante com base nas suas respostas.';
+
+    cell.innerHTML = `
+      <div class="swot-head">
+        <div class="swot-label">
+          <div class="swot-letter">${key}</div>
+          <div class="swot-meta-row">
+            <div class="swot-title">${meta.title}</div>
+            <div class="option-desc" style="margin-top:2px;">${meta.label}</div>
+          </div>
+        </div>
+        <div class="swot-score-line">
+          <div class="swot-score">${data.score}</div>
+          <div class="swot-percent">${data.percent}%</div>
+        </div>
+      </div>
+      <p class="swot-summary">${summary}</p>
+      ${data.items.length > 0 ? `<div class="swot-tags">${tags}</div>` : ''}
+      <span class="swot-cta">
+        Ver análise detalhada
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>`;
+    cell.addEventListener('click', () => openAnalysis(key));
+    matrix.appendChild(cell);
+  });
+
+  renderPDFContent();
+}
+
+/* ============================================================
+   MODAL DE ANÁLISE INDIVIDUAL
+   ============================================================ */
+function openAnalysis(key) {
+  const modal = document.getElementById('modal');
+  const meta = SWOT_META[key];
+  const data = state.swotResult[key];
+
+  modal.style.setProperty('--cell-color', `var(--swot-${key.toLowerCase()})`);
+  document.getElementById('modal-quadrant-label').textContent = meta.title;
+  document.getElementById('modal-title').textContent = `Análise de ${meta.title.toLowerCase()}`;
+  document.getElementById('modal-score').textContent = data.score;
+  document.getElementById('modal-score-label').textContent = `pontos · ${data.percent}% do total`;
+  document.getElementById('modal-intro').textContent = meta.intro;
+
+  const body = document.getElementById('modal-body');
+
+  if (data.items.length === 0) {
+    body.innerHTML = `<div class="modal-empty">Nenhum diagnóstico foi identificado neste quadrante com base nas suas respostas.</div>`;
+  } else {
+    const itemsHtml = data.items.map(it => `
+      <div class="diagnostic-item">
+        <div class="diagnostic-item-title">${it.result.title}</div>
+        <div class="diagnostic-item-analysis">${it.result.analysis}</div>
+        <div class="diagnostic-item-rec"><strong>Recomendação</strong>${it.result.recommendation}</div>
+      </div>
+    `).join('');
+    body.innerHTML = `<div class="diagnostic-list">${itemsHtml}</div>`;
+  }
+
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('modal-close').focus();
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAnalysis() {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+/* ============================================================
+   RENDER — CONTEÚDO PDF
+   ============================================================ */
+function renderPDFContent() {
+  const pdfContainer = document.getElementById('pdf-analysis');
+  const profile = PROFILES[state.profile];
+  const topic = TOPICS[state.topic];
+  const order = ['S', 'W', 'O', 'T'];
+
+  let html = `
+    <div class="pdf-analysis-section">
+      <h2 style="font-size: 22pt; margin-bottom: 12pt;">Resultado da Análise SWOT</h2>
+      <p style="margin-bottom: 6pt;"><strong>Perfil:</strong> ${profile.title}</p>
+      <p style="margin-bottom: 16pt;"><strong>Tema:</strong> ${topic.title}</p>
+    </div>
+  `;
+
+  order.forEach(key => {
+    const meta = SWOT_META[key];
+    const data = state.swotResult[key];
+
+    html += `
+      <div class="pdf-analysis-section">
+        <h3 class="pdf-analysis-title">${meta.title} — ${data.score} pontos (${data.percent}%)</h3>
+        <div class="pdf-analysis-content">
+          <p style="margin-bottom: 10pt;"><em>${meta.intro}</em></p>
+    `;
+
+    if (data.items.length === 0) {
+      html += `<p>Nenhum diagnóstico identificado neste quadrante.</p>`;
+    } else {
+      data.items.forEach(it => {
+        html += `
+          <div class="pdf-diagnostic">
+            <div class="pdf-diagnostic-title">${it.result.title}</div>
+            <div>${it.result.analysis}</div>
+            <div class="pdf-diagnostic-rec"><strong>Recomendação:</strong> ${it.result.recommendation}</div>
+          </div>
+        `;
+      });
+    }
+
+    html += `</div></div>`;
+  });
+
+  pdfContainer.innerHTML = html;
+}
+
+/* ============================================================
+   GERAR PDF
+   ============================================================ */
+function generatePDF() {
+  window.print();
+}
+
+/* ============================================================
+   EVENT LISTENERS
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-next').addEventListener('click', nextQuestion);
+  document.getElementById('btn-prev').addEventListener('click', prevQuestion);
+
+  document.getElementById('btn-back').addEventListener('click', goBack);
+  document.getElementById('btn-restart-top').addEventListener('click', () => {
+    if (confirm('Deseja recomeçar o quiz? Seu progresso atual será perdido.')) restart();
+  });
+
+  document.querySelector('[data-action="generate-pdf"]').addEventListener('click', generatePDF);
+  document.querySelector('[data-action="back-result"]').addEventListener('click', () => {
+    state.currentQuestion = state.questions.length - 1;
+    navigateTo('quiz');
+  });
+  document.querySelector('[data-action="restart"]').addEventListener('click', restart);
+
+  document.getElementById('modal-close').addEventListener('click', closeAnalysis);
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeAnalysis();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAnalysis();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const quizActive = document.querySelector('.screen.is-active')?.dataset.screen === 'quiz';
+    if (!quizActive) return;
+    const key = e.key.toLowerCase();
+    const map = { a: 0, b: 1, c: 2, d: 3, e: 4, f: 5 };
+    if (key in map) {
+      const q = state.questions[state.currentQuestion];
+      if (q.choices[map[key]]) selectChoice(q.choices[map[key]]);
+    }
+    if (e.key === 'Enter' && !document.getElementById('btn-next').disabled) nextQuestion();
+  });
+
+  renderHomeOptions();
+  renderChoice2();
+});
+</script>
+
+</body>
+</html>
