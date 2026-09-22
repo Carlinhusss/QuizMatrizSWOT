@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel de Resultados — LaCasaDePoffo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- SDK do Supabase com defer — NÃO bloqueia a renderização -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<style>
+:root {
+  --bg-base: oklch(0.12 0.015 25);
+  --bg-card: oklch(0.18 0.018 25);
+  --text-primary: oklch(0.975 0.006 80);
+  --text-secondary: oklch(0.720 0.014 25);
+  --accent: oklch(0.62 0.22 25);
+  --gold: oklch(0.82 0.14 85);
+  --swot-s: oklch(0.62 0.18 145);
+  --swot-w: oklch(0.68 0.18 55);
+  --swot-o: oklch(0.78 0.16 90);
+  --swot-t: oklch(0.62 0.18 300);
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Outfit', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 2vw;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid oklch(100% 0 0 / 0.1);
+  padding-bottom: 1vw;
+}
+h1 { font-family: var(--font-display); font-size: 3vw; font-weight: 700; letter-spacing: -0.02em; }
+h1 em { color: var(--accent); font-style: italic; }
+.last-update { font-size: 1vw; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.last-update.is-error { color: oklch(0.62 0.18 25); }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1.5vw;
+  flex: 1;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid oklch(100% 0 0 / 0.08);
+  border-radius: 1vw;
+  padding: 1.5vw;
+  display: flex;
+  flex-direction: column;
+}
+.card-title {
+  font-size: 1vw;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 1vw;
+}
+.card-value {
+  font-family: var(--font-display);
+  font-size: 4vw;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.card-sub { font-size: 1.2vw; color: var(--text-secondary); margin-top: 0.5vw; }
+
+.card-gold { border-color: oklch(0.82 0.14 85 / 0.3); background: linear-gradient(135deg, var(--bg-card), oklch(0.82 0.14 85 / 0.05)); }
+.card-gold .card-value { color: var(--gold); }
+
+.card-perfis { grid-column: span 2; }
+.bar-container { display: flex; flex-direction: column; gap: 1vw; margin-top: 1vw; }
+.bar-row { display: flex; align-items: center; gap: 1vw; }
+.bar-label { width: 8vw; font-size: 1vw; font-weight: 600; text-align: right; }
+.bar-track { flex: 1; height: 2vw; background: oklch(100% 0 0 / 0.05); border-radius: 1vw; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 1vw; transition: width 1s ease-out; }
+.bar-fill.estudante { background: var(--swot-o); }
+.bar-fill.empregado { background: var(--swot-s); }
+.bar-fill.empreendedor { background: var(--accent); }
+.bar-value { width: 4vw; font-size: 1vw; font-weight: 700; }
+
+.card-ranking { grid-column: span 2; grid-row: span 2; }
+.ranking-table { width: 100%; border-collapse: collapse; margin-top: 1vw; }
+.ranking-table th { text-align: left; font-size: 0.9vw; color: var(--text-secondary); text-transform: uppercase; padding: 0.8vw; border-bottom: 1px solid oklch(100% 0 0 / 0.1); }
+.ranking-table td { padding: 1vw 0.8vw; font-size: 1.1vw; border-bottom: 1px solid oklch(100% 0 0 / 0.05); }
+.ranking-table tr:first-child td { color: var(--gold); font-weight: 600; }
+.rank-pos { width: 3vw; font-family: var(--font-display); font-weight: 700; }
+
+.loading { opacity: 0.5; pointer-events: none; }
+
+@media (max-width: 1024px) {
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .card-perfis, .card-ranking { grid-column: span 2; }
+  h1 { font-size: 2rem; }
+  .card-value { font-size: 3rem; }
+  .bar-label, .bar-value, .ranking-table th, .ranking-table td { font-size: 1rem; }
+  .bar-track { height: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Painel de <em>Resultados</em></h1>
+  <div class="last-update" id="lastUpdate">Aguardando conexão...</div>
+</header>
+
+<div class="dashboard-grid" id="dashboard">
+  <div class="card">
+    <div class="card-title">Total de Participantes</div>
+    <div class="card-value" id="totalPlayers">0</div>
+    <div class="card-sub">Jogadas registradas</div>
+  </div>
+  <div class="card card-gold">
+    <div class="card-title">Matrizes SWOT Geradas</div>
+    <div class="card-value" id="totalMatrices">0</div>
+    <div class="card-sub">Quiz Estratégico Completo</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Média de Acertos (Illuminati)</div>
+    <div class="card-value" id="avgScore">0</div>
+    <div class="card-sub">De 10 perguntas possíveis</div>
+  </div>
+  <div class="card card-gold">
+    <div class="card-title">Melhor Tempo (Illuminati)</div>
+    <div class="card-value" id="bestTime">--:--</div>
+    <div class="card-sub">Menor tempo com ≥ 7 acertos</div>
+  </div>
+
+  <div class="card card-perfis">
+    <div class="card-title">Distribuição de Perfis (Quiz Estratégico)</div>
+    <div class="bar-container" id="profilesChart">
+      <div class="bar-row">
+        <div class="bar-label">Estudantes</div>
+        <div class="bar-track"><div class="bar-fill estudante" id="barEstudante" style="width: 0%"></div></div>
+        <div class="bar-value" id="valEstudante">0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Empregados</div>
+        <div class="bar-track"><div class="bar-fill empregado" id="barEmpregado" style="width: 0%"></div></div>
+        <div class="bar-value" id="valEmpregado">0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Empreendedores</div>
+        <div class="bar-track"><div class="bar-fill empreendedor" id="barEmpreendedor" style="width: 0%"></div></div>
+        <div class="bar-value" id="valEmpreendedor">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-ranking">
+    <div class="card-title">Últimos Resultados Registrados</div>
+    <table class="ranking-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Quiz</th>
+          <th>Resultado</th>
+          <th>Tempo</th>
+        </tr>
+      </thead>
+      <tbody id="rankingBody">
+        <tr><td colspan="5" style="text-align:center; padding: 2vw;">Aguardando dados...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+CONFIGURAÇÃO SUPABASE — INICIALIZAÇÃO ROBUSTA
+- Variável local RENOMEADA para 'supabaseClient' para evitar
+  colisão com o namespace global 'window.supabase' do SDK.
+- Sistema de retry com backoff exponencial.
+============================================================ */
+const SUPABASE_URL = 'https://hekvayycmfzwsulsrfnq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhla3ZheXljbWZ6d3N1bHNyZm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MTk0MjAsImV4cCI6MjEwNTI5NTQyMH0.CZu1l4gToQMHcnSJDAtHURH9Vg4CvOfrllF8D0BxLO4';
+
+let supabaseClient = null;
+let supabaseReady = false;
+const SUPABASE_MAX_RETRIES = 8;
+const SUPABASE_BASE_DELAY = 500;
+
+function tryInitSupabase() {
+    try {
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseReady = true;
+            console.log('[Supabase] ✓ Cliente inicializado com sucesso.');
+            return true;
+        }
+        return false;
+    } catch (err) {
+        console.error('[Supabase] Erro ao inicializar:', err);
+        return false;
+    }
+}
+
+async function initSupabaseWithRetry() {
+    for (let attempt = 1; attempt <= SUPABASE_MAX_RETRIES; attempt++) {
+        if (tryInitSupabase()) return true;
+        const delay = SUPABASE_BASE_DELAY * Math.pow(2, attempt - 1);
+        console.warn(`[Supabase] SDK não disponível. Tentativa ${attempt}/${SUPABASE_MAX_RETRIES}. Aguardando ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+    }
+    console.error('[Supabase] ✗ Falha ao conectar após ' + SUPABASE_MAX_RETRIES + ' tentativas.');
+    const statusEl = document.getElementById('lastUpdate');
+    if (statusEl) {
+        statusEl.textContent = 'Erro de conexão com o banco de dados.';
+        statusEl.classList.add('is-error');
+    }
+    return false;
+}
+
+function formatTime(seconds) {
+  if (!seconds && seconds !== 0) return '--:--';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+async function fetchData() {
+  // Garante que o cliente está pronto antes de buscar
+  if (!supabaseReady || !supabaseClient) {
+    console.warn('Supabase não está pronto. Tentando reconectar...');
+    const isConnected = await initSupabaseWithRetry();
+    if (!isConnected) return; // Aborta se ainda não conseguiu conectar
+  }
+
+  document.getElementById('dashboard').classList.add('loading');
+  try {
+    const { count: totalCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true });
+    const { count: matrixCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true }).eq('quiz_type', 'geral');
+    const { data: illuminatiData } = await supabaseClient.from('quiz_results').select('acertos, tempo_segundos').eq('quiz_type', 'illuminati').gte('acertos', 7).order('tempo_segundos', { ascending: true });
+    
+    let avgScore = 0;
+    let bestTime = '--:--';
+    if (illuminatiData && illuminatiData.length > 0) {
+      const sum = illuminatiData.reduce((acc, curr) => acc + (curr.acertos || 0), 0);
+      avgScore = (sum / illuminatiData.length).toFixed(1);
+      bestTime = formatTime(illuminatiData[0].tempo_segundos);
+    }
+
+    const { data: profileData } = await supabaseClient.from('quiz_results').select('perfil').eq('quiz_type', 'geral');
+    const profiles = { estudante: 0, empregado: 0, empreendedor: 0 };
+    if (profileData) {
+      profileData.forEach(row => { if (profiles[row.perfil] !== undefined) profiles[row.perfil]++; });
+    }
+    const pMax = Math.max(profiles.estudante, profiles.empregado, profiles.empreendedor, 1);
+
+    const { data: recentData } = await supabaseClient.from('quiz_results').select('nome, quiz_type, acertos, tempo_segundos, perfil').order('created_at', { ascending: false }).limit(8);
+
+    // Render
+    document.getElementById('totalPlayers').textContent = totalCount || 0;
+    document.getElementById('totalMatrices').textContent = matrixCount || 0;
+    document.getElementById('avgScore').textContent = avgScore;
+    document.getElementById('bestTime').textContent = bestTime;
+
+    document.getElementById('valEstudante').textContent = profiles.estudante;
+    document.getElementById('barEstudante').style.width = `${(profiles.estudante / pMax) * 100}%`;
+    document.getElementById('valEmpregado').textContent = profiles.empregado;
+    document.getElementById('barEmpregado').style.width = `${(profiles.empregado / pMax) * 100}%`;
+    document.getElementById('valEmpreendedor').textContent = profiles.empreendedor;
+    document.getElementById('barEmpreendedor').style.width = `${(profiles.empreendedor / pMax) * 100}%`;
+
+    const tbody = document.getElementById('rankingBody');
+    tbody.innerHTML = '';
+    if (recentData && recentData.length > 0) {
+      recentData.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        let resultado = row.acertos !== null ? `${row.acertos}/10` : 'Matriz Completa';
+        if (row.quiz_type === 'geral' && row.perfil) {
+          resultado = `${row.perfil.charAt(0).toUpperCase() + row.perfil.slice(1)}`;
+        }
+        tr.innerHTML = `
+          <td class="rank-pos">${index + 1}</td>
+          <td>${row.nome || 'Anônimo'}</td>
+          <td>${row.quiz_type === 'illuminati' ? 'Illuminati' : 'Estratégico'}</td>
+          <td>${resultado}</td>
+          <td>${formatTime(row.tempo_segundos)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2vw;">Nenhum dado registrado ainda.</td></tr>';
+    }
+
+    const now = new Date();
+    const statusEl = document.getElementById('lastUpdate');
+    statusEl.textContent = `Atualizado em: ${now.toLocaleTimeString('pt-BR')}`;
+    statusEl.classList.remove('is-error');
+  } catch (error) {
+    console.error('Erro ao buscar dados:', error);
+    const statusEl = document.getElementById('lastUpdate');
+    statusEl.textContent = 'Erro ao atualizar dados.';
+    statusEl.classList.add('is-error');
+  } finally {
+    document.getElementById('dashboard').classList.remove('loading');
+  }
+}
+
+// Inicialização segura ao carregar o DOM
+document.addEventListener('DOMContentLoaded', () => {
+  initSupabaseWithRetry().then(() => {
+    fetchData();
+    // Refresh a cada 20 segundos
+    setInterval(fetchData, 20000); 
+  });
+});
+
+// Fallback: se o SDK carregar depois do DOMContentLoaded
+window.addEventListener('load', () => {
+  if (!supabaseReady) {
+    initSupabaseWithRetry().then(() => {
+      fetchData();
+    });
+  }
+});
+</script>
+</body>
+</html>
