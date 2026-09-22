@@ -101,7 +101,6 @@ h1 em { color: var(--accent); font-style: italic; }
 .rank-pos { width: 3vw; font-family: var(--font-display); font-weight: 700; }
 
 .loading { opacity: 0.5; pointer-events: none; }
-
 @media (max-width: 1024px) {
   .dashboard-grid { grid-template-columns: 1fr 1fr; }
   .card-perfis, .card-ranking { grid-column: span 2; }
@@ -163,19 +162,18 @@ h1 em { color: var(--accent); font-style: italic; }
   </div>
 
   <div class="card card-ranking">
-    <div class="card-title">Últimos Resultados Registrados</div>
+    <div class="card-title">Últimos Resultados (Illuminati)</div>
     <table class="ranking-table">
       <thead>
         <tr>
           <th>#</th>
           <th>Nome</th>
-          <th>Quiz</th>
           <th>Resultado</th>
           <th>Tempo</th>
         </tr>
       </thead>
       <tbody id="rankingBody">
-        <tr><td colspan="5" style="text-align:center; padding: 2vw;">Aguardando dados...</td></tr>
+        <tr><td colspan="4" style="text-align:center; padding: 2vw;">Aguardando dados...</td></tr>
       </tbody>
     </table>
   </div>
@@ -263,7 +261,12 @@ async function fetchData() {
     }
     const pMax = Math.max(profiles.estudante, profiles.empregado, profiles.empreendedor, 1);
 
-    const { data: recentData } = await supabaseClient.from('quiz_results').select('nome, quiz_type, acertos, tempo_segundos, perfil').order('created_at', { ascending: false }).limit(8);
+    // FILTRO: Busca APENAS os resultados do Quiz Illuminati, ordenados do mais recente para o mais antigo
+    const { data: recentData } = await supabaseClient.from('quiz_results')
+      .select('nome, acertos, tempo_segundos')
+      .eq('quiz_type', 'illuminati')
+      .order('created_at', { ascending: false })
+      .limit(8);
 
     // Render
     document.getElementById('totalPlayers').textContent = totalCount || 0;
@@ -283,21 +286,19 @@ async function fetchData() {
     if (recentData && recentData.length > 0) {
       recentData.forEach((row, index) => {
         const tr = document.createElement('tr');
-        let resultado = row.acertos !== null ? `${row.acertos}/10` : 'Matriz Completa';
-        if (row.quiz_type === 'geral' && row.perfil) {
-          resultado = `${row.perfil.charAt(0).toUpperCase() + row.perfil.slice(1)}`;
-        }
+        const resultado = row.acertos !== null ? `${row.acertos}/10` : '--';
+        // Coluna "Quiz" removida da renderização
         tr.innerHTML = `
           <td class="rank-pos">${index + 1}</td>
           <td>${row.nome || 'Anônimo'}</td>
-          <td>${row.quiz_type === 'illuminati' ? 'Illuminati' : 'Estratégico'}</td>
           <td>${resultado}</td>
           <td>${formatTime(row.tempo_segundos)}</td>
         `;
         tbody.appendChild(tr);
       });
     } else {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2vw;">Nenhum dado registrado ainda.</td></tr>';
+      // colspan ajustado para 4 colunas
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2vw;">Nenhum dado registrado ainda.</td></tr>';
     }
 
     const now = new Date();
