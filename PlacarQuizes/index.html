@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Painel de Resultados — LaCasaDePoffo</title>
+<title>Painel de Resultados — Illuminati 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <style>
 :root {
+  /* Paleta OKLCH para percepção uniforme de cor e brilho */
   --bg-base: oklch(0.12 0.015 25);
   --bg-card: oklch(0.18 0.018 25);
   --text-primary: oklch(0.975 0.006 80);
@@ -21,93 +22,170 @@
   --swot-w: oklch(0.68 0.18 55);
   --swot-o: oklch(0.78 0.16 90);
   --swot-t: oklch(0.62 0.18 300);
+  
+  /* Tipografia */
   --font-display: 'Fraunces', serif;
   --font-body: 'Outfit', sans-serif;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
   font-family: var(--font-body);
   background: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
-  padding: 2vw;
+  /* Espaçamento fluido: mínimo 1rem (16px), ideal 2vw, máximo 2.5rem (40px) */
+  padding: clamp(1rem, 2vw, 2.5rem);
   display: flex;
   flex-direction: column;
-  gap: 2vw;
+  gap: clamp(1rem, 2vw, 2rem);
 }
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 1px solid oklch(100% 0 0 / 0.1);
-  padding-bottom: 1vw;
+  padding-bottom: clamp(0.75rem, 1vw, 1rem);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
-h1 { font-family: var(--font-display); font-size: 3vw; font-weight: 700; letter-spacing: -0.02em; }
+
+h1 { 
+  font-family: var(--font-display); 
+  /* Tipografia fluida: escala suavemente entre 1.75rem e 3rem */
+  font-size: clamp(1.75rem, 4vw, 3rem); 
+  font-weight: 700; 
+  letter-spacing: -0.02em; 
+  line-height: 1.1;
+}
 h1 em { color: var(--accent); font-style: italic; }
-.last-update { font-size: 1vw; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+.last-update { 
+  font-size: clamp(0.75rem, 1vw, 0.9rem); 
+  color: var(--text-secondary); 
+  font-variant-numeric: tabular-nums; 
+}
 .last-update.is-error { color: oklch(0.62 0.18 25); }
 
+/* Grid Adaptativo: 1 coluna no mobile, 2 no tablet, 4 no desktop */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto;
-  gap: 1.5vw;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1rem, 1.5vw, 1.5rem);
   flex: 1;
+  align-content: start;
 }
+
+/* Cards com largura total em telas menores, span específico em telas grandes */
 .card {
   background: var(--bg-card);
   border: 1px solid oklch(100% 0 0 / 0.08);
-  border-radius: 1vw;
-  padding: 1.5vw;
+  border-radius: clamp(0.75rem, 1vw, 1rem);
+  padding: clamp(1.25rem, 1.5vw, 1.5rem);
   display: flex;
   flex-direction: column;
+  transition: border-color 0.3s ease, transform 0.2s ease;
 }
+
 .card-title {
-  font-size: 1vw;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--text-secondary);
   font-weight: 600;
-  margin-bottom: 1vw;
+  margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
 }
+
 .card-value {
   font-family: var(--font-display);
-  font-size: 4vw;
+  font-size: clamp(2.5rem, 4vw, 4rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1;
 }
-.card-sub { font-size: 1.2vw; color: var(--text-secondary); margin-top: 0.5vw; }
 
-.card-gold { border-color: oklch(0.82 0.14 85 / 0.3); background: linear-gradient(135deg, var(--bg-card), oklch(0.82 0.14 85 / 0.05)); }
+.card-sub { 
+  font-size: clamp(0.85rem, 1.2vw, 1rem); 
+  color: var(--text-secondary); 
+  margin-top: clamp(0.25rem, 0.5vw, 0.5rem); 
+}
+
+.card-gold { 
+  border-color: oklch(0.82 0.14 85 / 0.3); 
+  background: linear-gradient(135deg, var(--bg-card), oklch(0.82 0.14 85 / 0.05)); 
+}
 .card-gold .card-value { color: var(--gold); }
 
-.card-perfis { grid-column: span 2; }
-.bar-container { display: flex; flex-direction: column; gap: 1vw; margin-top: 1vw; }
-.bar-row { display: flex; align-items: center; gap: 1vw; }
-.bar-label { width: 8vw; font-size: 1vw; font-weight: 600; text-align: right; }
-.bar-track { flex: 1; height: 2vw; background: oklch(100% 0 0 / 0.05); border-radius: 1vw; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 1vw; transition: width 1s ease-out; }
+/* Layouts específicos para desktop */
+@media (min-width: 1024px) {
+  .card-perfis { grid-column: span 2; }
+  .card-ranking { grid-column: span 2; grid-row: span 2; }
+}
+
+.bar-container { display: flex; flex-direction: column; gap: clamp(0.75rem, 1vw, 1rem); margin-top: clamp(0.5rem, 1vw, 1rem); }
+.bar-row { display: flex; align-items: center; gap: clamp(0.5rem, 1vw, 1rem); }
+.bar-label { 
+  width: clamp(100px, 8vw, 120px); 
+  font-size: clamp(0.8rem, 1vw, 0.9rem); 
+  font-weight: 600; 
+  text-align: right; 
+}
+.bar-track { 
+  flex: 1; 
+  height: clamp(1.25rem, 2vw, 1.5rem); 
+  background: oklch(100% 0 0 / 0.05); 
+  border-radius: 999px; 
+  overflow: hidden; 
+}
+.bar-fill { 
+  height: 100%; 
+  border-radius: 999px; 
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); 
+}
 .bar-fill.estudante { background: var(--swot-o); }
 .bar-fill.empregado { background: var(--swot-s); }
 .bar-fill.empreendedor { background: var(--accent); }
-.bar-value { width: 4vw; font-size: 1vw; font-weight: 700; }
+.bar-value { 
+  width: clamp(40px, 4vw, 60px); 
+  font-size: clamp(0.8rem, 1vw, 0.9rem); 
+  font-weight: 700; 
+  font-variant-numeric: tabular-nums;
+}
 
-.card-ranking { grid-column: span 2; grid-row: span 2; }
-.ranking-table { width: 100%; border-collapse: collapse; margin-top: 1vw; }
-.ranking-table th { text-align: left; font-size: 0.9vw; color: var(--text-secondary); text-transform: uppercase; padding: 0.8vw; border-bottom: 1px solid oklch(100% 0 0 / 0.1); }
-.ranking-table td { padding: 1vw 0.8vw; font-size: 1.1vw; border-bottom: 1px solid oklch(100% 0 0 / 0.05); }
+.card-ranking { min-height: 300px; }
+.ranking-table { width: 100%; border-collapse: collapse; margin-top: clamp(0.5rem, 1vw, 1rem); }
+.ranking-table th { 
+  text-align: left; 
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem); 
+  color: var(--text-secondary); 
+  text-transform: uppercase; 
+  padding: clamp(0.5rem, 0.8vw, 0.75rem); 
+  border-bottom: 1px solid oklch(100% 0 0 / 0.1); 
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.ranking-table td { 
+  padding: clamp(0.75rem, 1vw, 1rem) clamp(0.5rem, 0.8vw, 0.75rem); 
+  font-size: clamp(0.9rem, 1.1vw, 1rem); 
+  border-bottom: 1px solid oklch(100% 0 0 / 0.05); 
+  font-variant-numeric: tabular-nums;
+}
 .ranking-table tr:first-child td { color: var(--gold); font-weight: 600; }
-.rank-pos { width: 3vw; font-family: var(--font-display); font-weight: 700; }
+.rank-pos { 
+  width: clamp(40px, 3vw, 50px); 
+  font-family: var(--font-display); 
+  font-weight: 700; 
+}
 
-.loading { opacity: 0.5; pointer-events: none; }
-@media (max-width: 1024px) {
-  .dashboard-grid { grid-template-columns: 1fr 1fr; }
-  .card-perfis, .card-ranking { grid-column: span 2; }
-  h1 { font-size: 2rem; }
-  .card-value { font-size: 3rem; }
-  .bar-label, .bar-value, .ranking-table th, .ranking-table td { font-size: 1rem; }
-  .bar-track { height: 1.5rem; }
+.loading { opacity: 0.5; pointer-events: none; transition: opacity 0.3s ease; }
+
+/* Ajustes finos para mobile */
+@media (max-width: 640px) {
+  .bar-row { flex-wrap: wrap; }
+  .bar-label { width: 100%; text-align: left; margin-bottom: 0.25rem; }
+  .ranking-table th, .ranking-table td { padding: 0.75rem 0.5rem; }
 }
 </style>
 </head>
@@ -162,18 +240,18 @@ h1 em { color: var(--accent); font-style: italic; }
   </div>
 
   <div class="card card-ranking">
-    <div class="card-title">Últimos Resultados (Illuminati)</div>
+    <div class="card-title">Ranking de Desempenho (Illuminati)</div>
     <table class="ranking-table">
       <thead>
         <tr>
-          <th>#</th>
+          <th>Pos</th>
           <th>Nome</th>
-          <th>Resultado</th>
+          <th>Acertos</th>
           <th>Tempo</th>
         </tr>
       </thead>
       <tbody id="rankingBody">
-        <tr><td colspan="4" style="text-align:center; padding: 2vw;">Aguardando dados...</td></tr>
+        <tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-secondary);">Aguardando dados...</td></tr>
       </tbody>
     </table>
   </div>
@@ -182,9 +260,6 @@ h1 em { color: var(--accent); font-style: italic; }
 <script>
 /* ============================================================
 CONFIGURAÇÃO SUPABASE — INICIALIZAÇÃO ROBUSTA
-- Variável local RENOMEADA para 'supabaseClient' para evitar
-  colisão com o namespace global 'window.supabase' do SDK.
-- Sistema de retry com backoff exponencial.
 ============================================================ */
 const SUPABASE_URL = 'https://hekvayycmfzwsulsrfnq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhla3ZheXljbWZ6d3N1bHNyZm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MTk0MjAsImV4cCI6MjEwNTI5NTQyMH0.CZu1l4gToQMHcnSJDAtHURH9Vg4CvOfrllF8D0BxLO4';
@@ -233,18 +308,22 @@ function formatTime(seconds) {
 }
 
 async function fetchData() {
-  // Garante que o cliente está pronto antes de buscar
   if (!supabaseReady || !supabaseClient) {
     console.warn('Supabase não está pronto. Tentando reconectar...');
     const isConnected = await initSupabaseWithRetry();
-    if (!isConnected) return; // Aborta se ainda não conseguiu conectar
+    if (!isConnected) return;
   }
 
   document.getElementById('dashboard').classList.add('loading');
   try {
     const { count: totalCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true });
     const { count: matrixCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true }).eq('quiz_type', 'geral');
-    const { data: illuminatiData } = await supabaseClient.from('quiz_results').select('acertos, tempo_segundos').eq('quiz_type', 'illuminati').gte('acertos', 7).order('tempo_segundos', { ascending: true });
+    
+    const { data: illuminatiData } = await supabaseClient.from('quiz_results')
+      .select('acertos, tempo_segundos')
+      .eq('quiz_type', 'illuminati')
+      .gte('acertos', 7)
+      .order('tempo_segundos', { ascending: true });
     
     let avgScore = 0;
     let bestTime = '--:--';
@@ -261,14 +340,15 @@ async function fetchData() {
     }
     const pMax = Math.max(profiles.estudante, profiles.empregado, profiles.empreendedor, 1);
 
-    // FILTRO: Busca APENAS os resultados do Quiz Illuminati, ordenados do mais recente para o mais antigo
-    const { data: recentData } = await supabaseClient.from('quiz_results')
+    // ORDENAÇÃO EM CASCATA: Mais acertos primeiro, menor tempo desempata
+    const { data: rankingData } = await supabaseClient.from('quiz_results')
       .select('nome, acertos, tempo_segundos')
       .eq('quiz_type', 'illuminati')
-      .order('created_at', { ascending: false })
+      .order('acertos', { ascending: false })
+      .order('tempo_segundos', { ascending: true })
       .limit(8);
 
-    // Render
+    // Renderização
     document.getElementById('totalPlayers').textContent = totalCount || 0;
     document.getElementById('totalMatrices').textContent = matrixCount || 0;
     document.getElementById('avgScore').textContent = avgScore;
@@ -283,22 +363,23 @@ async function fetchData() {
 
     const tbody = document.getElementById('rankingBody');
     tbody.innerHTML = '';
-    if (recentData && recentData.length > 0) {
-      recentData.forEach((row, index) => {
+    
+    if (rankingData && rankingData.length > 0) {
+      rankingData.forEach((row, index) => {
         const tr = document.createElement('tr');
-        const resultado = row.acertos !== null ? `${row.acertos}/10` : '--';
-        // Coluna "Quiz" removida da renderização
+        const resultado = row.acertos !== null && row.acertos !== undefined ? `${row.acertos}/10` : '--';
+        const tempoFormatado = formatTime(row.tempo_segundos);
+        
         tr.innerHTML = `
-          <td class="rank-pos">${index + 1}</td>
+          <td class="rank-pos">${index + 1}º</td>
           <td>${row.nome || 'Anônimo'}</td>
           <td>${resultado}</td>
-          <td>${formatTime(row.tempo_segundos)}</td>
+          <td>${tempoFormatado}</td>
         `;
         tbody.appendChild(tr);
       });
     } else {
-      // colspan ajustado para 4 colunas
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2vw;">Nenhum dado registrado ainda.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-secondary);">Nenhum dado registrado ainda.</td></tr>';
     }
 
     const now = new Date();
@@ -315,16 +396,13 @@ async function fetchData() {
   }
 }
 
-// Inicialização segura ao carregar o DOM
 document.addEventListener('DOMContentLoaded', () => {
   initSupabaseWithRetry().then(() => {
     fetchData();
-    // Refresh a cada 20 segundos
     setInterval(fetchData, 20000); 
   });
 });
 
-// Fallback: se o SDK carregar depois do DOMContentLoaded
 window.addEventListener('load', () => {
   if (!supabaseReady) {
     initSupabaseWithRetry().then(() => {
