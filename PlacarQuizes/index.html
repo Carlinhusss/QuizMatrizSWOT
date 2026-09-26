@@ -2,271 +2,775 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Painel de Resultados — Illuminati 2026</title>
+
+<!-- Tipografia Original: Fraunces (Display) + Outfit (UI/Body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- SDK do Supabase com defer — NÃO bloqueia a renderização -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
 <style>
+/* ============================================================
+   DESIGN SYSTEM: ILLUMINATI 2026 ORIGINAL + POWER BI ORGANIZATION
+   ============================================================ */
 :root {
-  /* Paleta OKLCH para percepção uniforme de cor e brilho */
-  --bg-base: oklch(0.12 0.015 25);
-  --bg-card: oklch(0.18 0.018 25);
+  /* Paleta Original Preservada */
+  --bg-canvas: oklch(0.12 0.015 25);
+  --bg-card: oklch(0.16 0.018 25);
+  --bg-card-hover: oklch(0.19 0.02 25);
+  --bg-elevated: oklch(0.14 0.016 25);
+  --border-subtle: oklch(100% 0 0 / 0.08);
+  --border-strong: oklch(100% 0 0 / 0.14);
+  
   --text-primary: oklch(0.975 0.006 80);
   --text-secondary: oklch(0.720 0.014 25);
+  --text-tertiary: oklch(0.55 0.015 25);
+  
   --accent: oklch(0.62 0.22 25);
+  --accent-soft: oklch(0.62 0.22 25 / 0.12);
   --gold: oklch(0.82 0.14 85);
+  --gold-soft: oklch(0.82 0.14 85 / 0.12);
+  
+  /* Cores SWOT Originais */
   --swot-s: oklch(0.62 0.18 145);
-  --swot-w: oklch(0.68 0.18 55);
   --swot-o: oklch(0.78 0.16 90);
   --swot-t: oklch(0.62 0.18 300);
   
-  /* Tipografia */
+  /* Tipografia Original */
   --font-display: 'Fraunces', serif;
   --font-body: 'Outfit', sans-serif;
+  
+  /* Grid de 8px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  
+  /* Sombras Ambientais */
+  --shadow-card: 0 2px 8px oklch(0 0 0 / 0.3), 0 8px 24px oklch(0 0 0 / 0.2);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-body);
-  background: var(--bg-base);
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
-  min-height: 100vh;
-  /* Espaçamento fluido: mínimo 1rem (16px), ideal 2vw, máximo 2.5rem (40px) */
-  padding: clamp(1rem, 2vw, 2.5rem);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 2vw, 2rem);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-header {
+/* ============================================================
+   LAYOUT PRINCIPAL: TV DASHBOARD TWO-COLUMN
+   Coluna esquerda mais fina (38%), coluna direita maior (62%)
+   ============================================================ */
+.tv-dashboard {
+  display: grid;
+  grid-template-columns: 38% 62%;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  transition: opacity 0.5s ease;
+}
+
+.tv-dashboard.is-updating {
+  opacity: 0.75;
+}
+
+/* ============================================================
+   COLUNA ESQUERDA: RANKING PRINCIPAL (mais fina e vertical)
+   ============================================================ */
+.ranking-column {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.ranking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--border-strong);
+  margin-bottom: var(--space-4);
+  flex-shrink: 0;
+}
+
+.ranking-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.ranking-subtitle {
+  font-size: clamp(0.75rem, 0.9vw, 0.9rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.ranking-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  min-height: 0;
+}
+
+.ranking-table-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+/* Ranking Row - Grande e legível à distância */
+.ranking-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 140px 85px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  min-height: 68px;
+}
+
+.ranking-row:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+}
+
+/* Posição - Badge grande */
+.rank-pos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-canvas);
+  border: 2px solid var(--border-subtle);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.4vw, 1.4rem);
+  font-weight: 800;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* Top 3 - Destaque dourado */
+.ranking-row.rank-1 .rank-pos {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: oklch(0.12 0.015 25);
+  width: 52px;
+  height: 52px;
+  font-size: clamp(1.3rem, 1.6vw, 1.6rem);
+  box-shadow: 0 0 20px oklch(0.82 0.14 85 / 0.35);
+}
+
+.ranking-row.rank-1 {
+  border-color: var(--gold);
+  background: oklch(0.82 0.14 85 / 0.06);
+  min-height: 76px;
+}
+
+.ranking-row.rank-2 .rank-pos {
+  border-color: oklch(0.75 0.02 250);
+  color: oklch(0.75 0.02 250);
+}
+
+.ranking-row.rank-3 .rank-pos {
+  border-color: oklch(0.6 0.1 50);
+  color: oklch(0.6 0.1 50);
+}
+
+/* Nome do Participante */
+.rank-name {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ranking-row.rank-1 .rank-name {
+  font-weight: 700;
+  color: var(--gold);
+  font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+}
+
+/* Data Bar de Acertos */
+.rank-acertos {
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.data-bar-bg {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 32px;
+  background: var(--accent-soft);
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+  min-width: 4px;
+}
+
+.ranking-row.rank-1 .data-bar-bg {
+  background: var(--gold-soft);
+}
+
+.data-bar-text {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-left: var(--space-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tempo */
+.rank-tempo {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ranking-row.rank-1 .rank-tempo {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ============================================================
+   COLUNA DIREITA: KPIs + GRÁFICOS
+   ============================================================ */
+.content-column {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  overflow: hidden;
+  gap: var(--space-4);
+}
+
+/* Header do Dashboard */
+.dashboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 1px solid oklch(100% 0 0 / 0.1);
-  padding-bottom: clamp(0.75rem, 1vw, 1rem);
-  flex-wrap: wrap;
-  gap: 1rem;
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
-h1 { 
-  font-family: var(--font-display); 
-  /* Tipografia fluida: escala suavemente entre 1.75rem e 3rem */
-  font-size: clamp(1.75rem, 4vw, 3rem); 
-  font-weight: 700; 
-  letter-spacing: -0.02em; 
-  line-height: 1.1;
-}
-h1 em { color: var(--accent); font-style: italic; }
-
-.last-update { 
-  font-size: clamp(0.75rem, 1vw, 0.9rem); 
-  color: var(--text-secondary); 
-  font-variant-numeric: tabular-nums; 
-}
-.last-update.is-error { color: oklch(0.62 0.18 25); }
-
-/* Grid Adaptativo: 1 coluna no mobile, 2 no tablet, 4 no desktop */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(1rem, 1.5vw, 1.5rem);
-  flex: 1;
-  align-content: start;
-}
-
-/* Cards com largura total em telas menores, span específico em telas grandes */
-.card {
-  background: var(--bg-card);
-  border: 1px solid oklch(100% 0 0 / 0.08);
-  border-radius: clamp(0.75rem, 1vw, 1rem);
-  padding: clamp(1.25rem, 1.5vw, 1.5rem);
+.header-title-group {
   display: flex;
   flex-direction: column;
-  transition: border-color 0.3s ease, transform 0.2s ease;
+  gap: var(--space-1);
 }
 
-.card-title {
-  font-size: clamp(0.7rem, 1vw, 0.85rem);
+.report-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.report-title em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.report-subtitle {
+  font-size: clamp(0.9rem, 1.15vw, 1.1rem);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Live indicator discreto */
+.live-dot-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.live-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--swot-s);
+  border-radius: 50%;
+  animation: pulse 2.5s infinite;
+  box-shadow: 0 0 10px oklch(0.62 0.18 145 / 0.6);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 oklch(0.62 0.18 145 / 0.6); }
+  70% { box-shadow: 0 0 0 10px oklch(0.62 0.18 145 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.62 0.18 145 / 0); }
+}
+
+/* ============================================================
+   KPIs ROW - MAIORES E MAIS LEGÍVEIS
+   ============================================================ */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  min-height: 130px;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+
+.kpi-card.accent-blue::before { background: var(--swot-o); }
+.kpi-card.accent-teal::before { background: var(--swot-s); }
+.kpi-card.accent-yellow::before { background: var(--gold); }
+.kpi-card.accent-coral::before { background: var(--accent); }
+
+.visual-header {
+  font-size: clamp(0.7rem, 0.85vw, 0.82rem);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-secondary);
-  font-weight: 600;
-  margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
+  margin-bottom: var(--space-3);
 }
 
-.card-value {
+.kpi-value {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-sub {
+  font-size: clamp(0.75rem, 0.85vw, 0.88rem);
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+/* ============================================================
+   CHARTS ROW - SEM CORTES, ALTURA ADEQUADA
+   ============================================================ */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: var(--space-4);
+  flex: 1;
+  min-height: 0;
+}
+
+.visual-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  min-height: 0;
+  overflow: visible;
+}
+
+.visual-title {
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Donut Chart - Sem cortes */
+.donut-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: var(--space-5);
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-3) 0;
+}
+
+.donut-chart {
+  width: clamp(140px, 15vw, 200px);
+  height: clamp(140px, 15vw, 200px);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 2px 8px oklch(0 0 0 / 0.3);
+}
+
+.donut-hole {
+  width: 60%;
+  height: 60%;
+  background: var(--bg-card);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.donut-total {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.card-sub { 
-  font-size: clamp(0.85rem, 1.2vw, 1rem); 
-  color: var(--text-secondary); 
-  margin-top: clamp(0.25rem, 0.5vw, 0.5rem); 
-}
-
-.card-gold { 
-  border-color: oklch(0.82 0.14 85 / 0.3); 
-  background: linear-gradient(135deg, var(--bg-card), oklch(0.82 0.14 85 / 0.05)); 
-}
-.card-gold .card-value { color: var(--gold); }
-
-/* Layouts específicos para desktop */
-@media (min-width: 1024px) {
-  .card-perfis { grid-column: span 2; }
-  .card-ranking { grid-column: span 2; grid-row: span 2; }
-}
-
-.bar-container { display: flex; flex-direction: column; gap: clamp(0.75rem, 1vw, 1rem); margin-top: clamp(0.5rem, 1vw, 1rem); }
-.bar-row { display: flex; align-items: center; gap: clamp(0.5rem, 1vw, 1rem); }
-.bar-label { 
-  width: clamp(100px, 8vw, 120px); 
-  font-size: clamp(0.8rem, 1vw, 0.9rem); 
-  font-weight: 600; 
-  text-align: right; 
-}
-.bar-track { 
-  flex: 1; 
-  height: clamp(1.25rem, 2vw, 1.5rem); 
-  background: oklch(100% 0 0 / 0.05); 
-  border-radius: 999px; 
-  overflow: hidden; 
-}
-.bar-fill { 
-  height: 100%; 
-  border-radius: 999px; 
-  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); 
-}
-.bar-fill.estudante { background: var(--swot-o); }
-.bar-fill.empregado { background: var(--swot-s); }
-.bar-fill.empreendedor { background: var(--accent); }
-.bar-value { 
-  width: clamp(40px, 4vw, 60px); 
-  font-size: clamp(0.8rem, 1vw, 0.9rem); 
-  font-weight: 700; 
-  font-variant-numeric: tabular-nums;
-}
-
-.card-ranking { min-height: 300px; }
-.ranking-table { width: 100%; border-collapse: collapse; margin-top: clamp(0.5rem, 1vw, 1rem); }
-.ranking-table th { 
-  text-align: left; 
-  font-size: clamp(0.7rem, 0.9vw, 0.85rem); 
-  color: var(--text-secondary); 
-  text-transform: uppercase; 
-  padding: clamp(0.5rem, 0.8vw, 0.75rem); 
-  border-bottom: 1px solid oklch(100% 0 0 / 0.1); 
+.donut-label {
+  font-size: clamp(0.65rem, 0.8vw, 0.78rem);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+  max-width: 220px;
+  min-width: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(0.85rem, 1.05vw, 1.05rem);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 4px;
+  gap: var(--space-2);
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: var(--space-2);
+  flex-shrink: 0;
+}
+
+.legend-info { 
+  display: flex; 
+  align-items: center; 
+  flex: 1; 
+  min-width: 0;
+}
+
+.legend-name { 
+  color: var(--text-secondary); 
+  font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.ranking-table td { 
-  padding: clamp(0.75rem, 1vw, 1rem) clamp(0.5rem, 0.8vw, 0.75rem); 
-  font-size: clamp(0.9rem, 1.1vw, 1rem); 
-  border-bottom: 1px solid oklch(100% 0 0 / 0.05); 
-  font-variant-numeric: tabular-nums;
-}
-.ranking-table tr:first-child td { color: var(--gold); font-weight: 600; }
-.rank-pos { 
-  width: clamp(40px, 3vw, 50px); 
-  font-family: var(--font-display); 
+
+.legend-value { 
+  color: var(--text-primary); 
   font-weight: 700; 
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  flex-shrink: 0;
 }
 
-.loading { opacity: 0.5; pointer-events: none; transition: opacity 0.3s ease; }
+/* Score Distribution - Sem cortes */
+.score-distribution {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: var(--space-4);
+  flex: 1;
+  padding: var(--space-3) 0;
+  min-height: 0;
+}
 
-/* Ajustes finos para mobile */
-@media (max-width: 640px) {
-  .bar-row { flex-wrap: wrap; }
-  .bar-label { width: 100%; text-align: left; margin-bottom: 0.25rem; }
-  .ranking-table th, .ranking-table td { padding: 0.75rem 0.5rem; }
+.score-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 50px;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.score-label {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.05vw, 1.05rem);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.score-bar-bg {
+  height: 28px;
+  background: var(--bg-canvas);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 4px;
+}
+
+.score-bar-fill.high { background: var(--swot-s); }
+.score-bar-fill.mid-high { background: var(--swot-o); }
+.score-bar-fill.mid { background: var(--gold); }
+.score-bar-fill.low { background: var(--swot-t); }
+
+.score-value {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 80px;
+  color: var(--text-tertiary);
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+@media (max-width: 1200px) {
+  .tv-dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
+  }
+  
+  .ranking-column {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    max-height: 50dvh;
+  }
+  
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .content-column { overflow-y: visible; }
+}
+
+@media (max-width: 768px) {
+  .ranking-column {
+    max-height: none;
+    padding: var(--space-3);
+  }
+  
+  .content-column {
+    padding: var(--space-3);
+  }
+  
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  
+  .ranking-row {
+    grid-template-columns: 44px 1fr 90px 70px;
+    padding: var(--space-2) var(--space-3);
+    min-height: 56px;
+  }
+  
+  .rank-pos {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Painel de <em>Resultados</em></h1>
-  <div class="last-update" id="lastUpdate">Aguardando conexão...</div>
-</header>
-
-<div class="dashboard-grid" id="dashboard">
-  <div class="card">
-    <div class="card-title">Total de Participantes</div>
-    <div class="card-value" id="totalPlayers">0</div>
-    <div class="card-sub">Jogadas registradas</div>
-  </div>
-  <div class="card card-gold">
-    <div class="card-title">Matrizes SWOT Geradas</div>
-    <div class="card-value" id="totalMatrices">0</div>
-    <div class="card-sub">Quiz Estratégico Completo</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Média de Acertos (Illuminati)</div>
-    <div class="card-value" id="avgScore">0</div>
-    <div class="card-sub">De 10 perguntas possíveis</div>
-  </div>
-  <div class="card card-gold">
-    <div class="card-title">Melhor Tempo (Illuminati)</div>
-    <div class="card-value" id="bestTime">--:--</div>
-    <div class="card-sub">Menor tempo com ≥ 7 acertos</div>
-  </div>
-
-  <div class="card card-perfis">
-    <div class="card-title">Distribuição de Perfis (Quiz Estratégico)</div>
-    <div class="bar-container" id="profilesChart">
-      <div class="bar-row">
-        <div class="bar-label">Estudantes</div>
-        <div class="bar-track"><div class="bar-fill estudante" id="barEstudante" style="width: 0%"></div></div>
-        <div class="bar-value" id="valEstudante">0</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Empregados</div>
-        <div class="bar-track"><div class="bar-fill empregado" id="barEmpregado" style="width: 0%"></div></div>
-        <div class="bar-value" id="valEmpregado">0</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Empreendedores</div>
-        <div class="bar-track"><div class="bar-fill empreendedor" id="barEmpreendedor" style="width: 0%"></div></div>
-        <div class="bar-value" id="valEmpreendedor">0</div>
+<div class="tv-dashboard" id="dashboard">
+  
+  <!-- COLUNA ESQUERDA: RANKING PRINCIPAL -->
+  <aside class="ranking-column">
+    <div class="ranking-header">
+      <h2 class="ranking-title">Ranking de Desempenho</h2>
+      <span class="ranking-subtitle">Illuminati</span>
+    </div>
+    <div class="ranking-table-wrapper">
+      <div class="ranking-list" id="rankingBody">
+        <div class="empty-state">Carregando dados...</div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <div class="card card-ranking">
-    <div class="card-title">Ranking de Desempenho (Illuminati)</div>
-    <table class="ranking-table">
-      <thead>
-        <tr>
-          <th>Pos</th>
-          <th>Nome</th>
-          <th>Acertos</th>
-          <th>Tempo</th>
-        </tr>
-      </thead>
-      <tbody id="rankingBody">
-        <tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-secondary);">Aguardando dados...</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- COLUNA DIREITA: KPIs + GRÁFICOS -->
+  <main class="content-column">
+    
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-title-group">
+        <h1 class="report-title">Painel de <em>Resultados</em></h1>
+        <span class="report-subtitle">Illuminati 2026 • Visão Geral de Desempenho</span>
+      </div>
+      <div class="live-dot-container">
+        <div class="live-dot" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-row">
+      <article class="kpi-card accent-blue">
+        <div class="visual-header">Total de Participantes</div>
+        <div class="kpi-value" id="totalPlayers">0</div>
+        <div class="kpi-sub">Jogadas registradas no sistema</div>
+      </article>
+
+      <article class="kpi-card accent-teal">
+        <div class="visual-header">Matrizes SWOT</div>
+        <div class="kpi-value" id="totalMatrices">0</div>
+        <div class="kpi-sub">Quiz Estratégico Completo</div>
+      </article>
+
+      <article class="kpi-card accent-yellow">
+        <div class="visual-header">Média de Acertos</div>
+        <div class="kpi-value" id="avgScore">0.0</div>
+        <div class="kpi-sub">Média geral (Illuminati)</div>
+      </article>
+
+      <article class="kpi-card accent-coral">
+        <div class="visual-header">Melhor Tempo</div>
+        <div class="kpi-value" id="bestTime">--:--</div>
+        <div class="kpi-sub">Menor tempo com ≥ 7 acertos</div>
+      </article>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts-row">
+      <!-- Donut Chart -->
+      <div class="visual-card">
+        <div class="visual-title">Distribuição de Perfis</div>
+        <div class="donut-wrapper">
+          <div class="donut-chart" id="donutChart" role="img" aria-label="Gráfico de distribuição de perfis">
+            <div class="donut-hole">
+              <span class="donut-total" id="donutTotal">0</span>
+              <span class="donut-label">Total</span>
+            </div>
+          </div>
+          <div class="donut-legend" id="donutLegend">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Score Distribution -->
+      <div class="visual-card">
+        <div class="visual-title">Distribuição de Acertos</div>
+        <div class="score-distribution" id="scoreDistribution">
+          <div class="empty-state">Processando dados...</div>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+
 </div>
 
 <script>
 /* ============================================================
-CONFIGURAÇÃO SUPABASE — INICIALIZAÇÃO ROBUSTA
-============================================================ */
+   CONFIGURAÇÃO SUPABASE — PRESERVADA INTEGRALMENTE
+   ============================================================ */
 const SUPABASE_URL = 'https://hekvayycmfzwsulsrfnq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhla3ZheXljbWZ6d3N1bHNyZm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MTk0MjAsImV4cCI6MjEwNTI5NTQyMH0.CZu1l4gToQMHcnSJDAtHURH9Vg4CvOfrllF8D0BxLO4';
 
 let supabaseClient = null;
 let supabaseReady = false;
-const SUPABASE_MAX_RETRIES = 8;
+const SUPABASE_MAX_RETRIES = 5;
 const SUPABASE_BASE_DELAY = 500;
 
 function tryInitSupabase() {
@@ -274,7 +778,6 @@ function tryInitSupabase() {
         if (window.supabase && typeof window.supabase.createClient === 'function') {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             supabaseReady = true;
-            console.log('[Supabase] ✓ Cliente inicializado com sucesso.');
             return true;
         }
         return false;
@@ -288,20 +791,14 @@ async function initSupabaseWithRetry() {
     for (let attempt = 1; attempt <= SUPABASE_MAX_RETRIES; attempt++) {
         if (tryInitSupabase()) return true;
         const delay = SUPABASE_BASE_DELAY * Math.pow(2, attempt - 1);
-        console.warn(`[Supabase] SDK não disponível. Tentativa ${attempt}/${SUPABASE_MAX_RETRIES}. Aguardando ${delay}ms...`);
         await new Promise(r => setTimeout(r, delay));
     }
-    console.error('[Supabase] ✗ Falha ao conectar após ' + SUPABASE_MAX_RETRIES + ' tentativas.');
-    const statusEl = document.getElementById('lastUpdate');
-    if (statusEl) {
-        statusEl.textContent = 'Erro de conexão com o banco de dados.';
-        statusEl.classList.add('is-error');
-    }
+    console.error('[Supabase] Falha após múltiplas tentativas');
     return false;
 }
 
 function formatTime(seconds) {
-  if (!seconds && seconds !== 0) return '--:--';
+  if (seconds === null || seconds === undefined || isNaN(seconds)) return '--:--';
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, '0')}`;
@@ -309,106 +806,205 @@ function formatTime(seconds) {
 
 async function fetchData() {
   if (!supabaseReady || !supabaseClient) {
-    console.warn('Supabase não está pronto. Tentando reconectar...');
     const isConnected = await initSupabaseWithRetry();
     if (!isConnected) return;
   }
 
-  document.getElementById('dashboard').classList.add('loading');
+  const dashboard = document.getElementById('dashboard');
+  dashboard.classList.add('is-updating');
+
   try {
+    // ============================================================
+    // 1. TOTAIS GLOBAIS - Lógica original preservada
+    // ============================================================
     const { count: totalCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true });
     const { count: matrixCount } = await supabaseClient.from('quiz_results').select('*', { count: 'exact', head: true }).eq('quiz_type', 'geral');
     
-    const { data: illuminatiData } = await supabaseClient.from('quiz_results')
-      .select('acertos, tempo_segundos')
+    // ============================================================
+    // 2. CORREÇÃO CRÍTICA: MÉDIA DE ACERTOS
+    //    Busca TODOS os resultados do Quiz Illuminati (sem filtro de acertos)
+    //    para calcular a média real.
+    // ============================================================
+    const { data: allIlluminatiData } = await supabaseClient.from('quiz_results')
+      .select('acertos')
+      .eq('quiz_type', 'illuminati');
+    
+    let avgScore = '0.0';
+    if (allIlluminatiData && allIlluminatiData.length > 0) {
+      const sum = allIlluminatiData.reduce((acc, curr) => acc + (Number(curr.acertos) || 0), 0);
+      const avg = sum / allIlluminatiData.length;
+      avgScore = isFinite(avg) ? avg.toFixed(1) : '0.0';
+    }
+    
+    // ============================================================
+    // 3. MELHOR TEMPO (mantém filtro original: ≥ 7 acertos)
+    // ============================================================
+    const { data: bestTimeData } = await supabaseClient.from('quiz_results')
+      .select('tempo_segundos')
       .eq('quiz_type', 'illuminati')
       .gte('acertos', 7)
-      .order('tempo_segundos', { ascending: true });
+      .order('tempo_segundos', { ascending: true })
+      .limit(1);
     
-    let avgScore = 0;
     let bestTime = '--:--';
-    if (illuminatiData && illuminatiData.length > 0) {
-      const sum = illuminatiData.reduce((acc, curr) => acc + (curr.acertos || 0), 0);
-      avgScore = (sum / illuminatiData.length).toFixed(1);
-      bestTime = formatTime(illuminatiData[0].tempo_segundos);
+    if (bestTimeData && bestTimeData.length > 0 && bestTimeData[0].tempo_segundos != null) {
+      bestTime = formatTime(bestTimeData[0].tempo_segundos);
     }
 
+    // ============================================================
+    // 4. PERFIS PARA O DONUT CHART (quiz_type = 'geral')
+    // ============================================================
     const { data: profileData } = await supabaseClient.from('quiz_results').select('perfil').eq('quiz_type', 'geral');
     const profiles = { estudante: 0, empregado: 0, empreendedor: 0 };
     if (profileData) {
       profileData.forEach(row => { if (profiles[row.perfil] !== undefined) profiles[row.perfil]++; });
     }
-    const pMax = Math.max(profiles.estudante, profiles.empregado, profiles.empreendedor, 1);
-
-    // ORDENAÇÃO EM CASCATA: Mais acertos primeiro, menor tempo desempata
+    const totalProfiles = profiles.estudante + profiles.empregado + profiles.empreendedor;
+    
+    const pEst = totalProfiles > 0 ? (profiles.estudante / totalProfiles) * 100 : 0;
+    const pEmp = totalProfiles > 0 ? (profiles.empregado / totalProfiles) * 100 : 0;
+    
+    // ============================================================
+    // 5. RANKING (Illuminati) - Regra: maior acertos, menor tempo
+    // ============================================================
     const { data: rankingData } = await supabaseClient.from('quiz_results')
       .select('nome, acertos, tempo_segundos')
       .eq('quiz_type', 'illuminati')
       .order('acertos', { ascending: false })
       .order('tempo_segundos', { ascending: true })
-      .limit(8);
+      .limit(20);
 
-    // Renderização
-    document.getElementById('totalPlayers').textContent = totalCount || 0;
-    document.getElementById('totalMatrices').textContent = matrixCount || 0;
+    // ============================================================
+    // 6. DISTRIBUIÇÃO DE ACERTOS para gráfico de barras
+    // ============================================================
+    const scoreBuckets = { '10': 0, '8-9': 0, '6-7': 0, '<6': 0 };
+    if (allIlluminatiData) {
+      allIlluminatiData.forEach(row => {
+        const score = Number(row.acertos) || 0;
+        if (score === 10) scoreBuckets['10']++;
+        else if (score >= 8) scoreBuckets['8-9']++;
+        else if (score >= 6) scoreBuckets['6-7']++;
+        else scoreBuckets['<6']++;
+      });
+    }
+    const maxScoreCount = Math.max(...Object.values(scoreBuckets), 1);
+
+    // ============================================================
+    // === RENDERIZAÇÃO ===
+    // ============================================================
+    
+    // KPIs - garantindo valores válidos
+    document.getElementById('totalPlayers').textContent = (totalCount != null && isFinite(totalCount)) ? totalCount : 0;
+    document.getElementById('totalMatrices').textContent = (matrixCount != null && isFinite(matrixCount)) ? matrixCount : 0;
     document.getElementById('avgScore').textContent = avgScore;
     document.getElementById('bestTime').textContent = bestTime;
 
-    document.getElementById('valEstudante').textContent = profiles.estudante;
-    document.getElementById('barEstudante').style.width = `${(profiles.estudante / pMax) * 100}%`;
-    document.getElementById('valEmpregado').textContent = profiles.empregado;
-    document.getElementById('barEmpregado').style.width = `${(profiles.empregado / pMax) * 100}%`;
-    document.getElementById('valEmpreendedor').textContent = profiles.empreendedor;
-    document.getElementById('barEmpreendedor').style.width = `${(profiles.empreendedor / pMax) * 100}%`;
+    // Donut Chart
+    document.getElementById('donutTotal').textContent = totalProfiles;
+    
+    const legendContainer = document.getElementById('donutLegend');
+    legendContainer.innerHTML = `
+      <div class="legend-item">
+        <div class="legend-info">
+          <div class="legend-color" style="background: var(--swot-o);"></div>
+          <span class="legend-name">Estudantes</span>
+        </div>
+        <span class="legend-value">${profiles.estudante}</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-info">
+          <div class="legend-color" style="background: var(--swot-s);"></div>
+          <span class="legend-name">Empregados</span>
+        </div>
+        <span class="legend-value">${profiles.empregado}</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-info">
+          <div class="legend-color" style="background: var(--swot-t);"></div>
+          <span class="legend-name">Empreendedores</span>
+        </div>
+        <span class="legend-value">${profiles.empreendedor}</span>
+      </div>
+    `;
+    
+    const donut = document.getElementById('donutChart');
+    donut.style.background = `conic-gradient(
+      var(--swot-o) 0% ${pEst}%, 
+      var(--swot-s) ${pEst}% ${pEst + pEmp}%, 
+      var(--swot-t) ${pEst + pEmp}% 100%
+    )`;
 
-    const tbody = document.getElementById('rankingBody');
-    tbody.innerHTML = '';
+    // Distribuição de Acertos
+    const distContainer = document.getElementById('scoreDistribution');
+    const scoreLabels = [
+      { key: '10', label: '10/10', class: 'high' },
+      { key: '8-9', label: '8-9/10', class: 'mid-high' },
+      { key: '6-7', label: '6-7/10', class: 'mid' },
+      { key: '<6', label: '< 6/10', class: 'low' }
+    ];
+    
+    distContainer.innerHTML = scoreLabels.map(item => {
+      const count = scoreBuckets[item.key];
+      const pct = (count / maxScoreCount) * 100;
+      return `
+        <div class="score-row">
+          <div class="score-label">${item.label}</div>
+          <div class="score-bar-bg">
+            <div class="score-bar-fill ${item.class}" style="width: ${pct}%;"></div>
+          </div>
+          <div class="score-value">${count}</div>
+        </div>
+      `;
+    }).join('');
+
+    // Ranking
+    const rankingList = document.getElementById('rankingBody');
+    rankingList.innerHTML = '';
     
     if (rankingData && rankingData.length > 0) {
       rankingData.forEach((row, index) => {
-        const tr = document.createElement('tr');
-        const resultado = row.acertos !== null && row.acertos !== undefined ? `${row.acertos}/10` : '--';
+        const acertos = (row.acertos !== null && row.acertos !== undefined) ? Number(row.acertos) : 0;
+        const resultadoTexto = `${acertos}/10`;
         const tempoFormatado = formatTime(row.tempo_segundos);
+        const barWidth = (acertos / 10) * 100;
         
-        tr.innerHTML = `
-          <td class="rank-pos">${index + 1}º</td>
-          <td>${row.nome || 'Anônimo'}</td>
-          <td>${resultado}</td>
-          <td>${tempoFormatado}</td>
+        const pos = index + 1;
+        let rankClass = '';
+        if (pos === 1) rankClass = 'rank-1';
+        else if (pos === 2) rankClass = 'rank-2';
+        else if (pos === 3) rankClass = 'rank-3';
+        
+        const rowEl = document.createElement('div');
+        rowEl.className = `ranking-row ${rankClass}`;
+        rowEl.innerHTML = `
+          <div class="rank-pos">${pos}</div>
+          <div class="rank-name">${row.nome || 'Anônimo'}</div>
+          <div class="rank-acertos">
+            <div class="data-bar-bg" style="width: ${barWidth}%;"></div>
+            <span class="data-bar-text">${resultadoTexto}</span>
+          </div>
+          <div class="rank-tempo">${tempoFormatado}</div>
         `;
-        tbody.appendChild(tr);
+        rankingList.appendChild(rowEl);
       });
     } else {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-secondary);">Nenhum dado registrado ainda.</td></tr>';
+      rankingList.innerHTML = '<div class="empty-state">Nenhum dado registrado ainda.</div>';
     }
 
-    const now = new Date();
-    const statusEl = document.getElementById('lastUpdate');
-    statusEl.textContent = `Atualizado em: ${now.toLocaleTimeString('pt-BR')}`;
-    statusEl.classList.remove('is-error');
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
-    const statusEl = document.getElementById('lastUpdate');
-    statusEl.textContent = 'Erro ao atualizar dados.';
-    statusEl.classList.add('is-error');
   } finally {
-    document.getElementById('dashboard').classList.remove('loading');
+    setTimeout(() => {
+      dashboard.classList.remove('is-updating');
+    }, 400);
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initSupabaseWithRetry().then(() => {
     fetchData();
-    setInterval(fetchData, 20000); 
+    setInterval(fetchData, 30000);
   });
-});
-
-window.addEventListener('load', () => {
-  if (!supabaseReady) {
-    initSupabaseWithRetry().then(() => {
-      fetchData();
-    });
-  }
 });
 </script>
 </body>
